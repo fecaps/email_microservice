@@ -1,7 +1,7 @@
 {
-    "name": "laravel/laravel",
+    "name": "fecaps/email_microservice",
     "type": "project",
-    "description": "The Laravel Framework.",
+    "description": "Email Microservice",
     "keywords": [
         "framework",
         "laravel"
