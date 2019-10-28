@@ -2,25 +2,36 @@
 
 ## Usage
 
+### Clone
+
+Clone the project and enter on its folder:
+
+```bash
+$ git clone git@gitlab.com:fecaps/email_microservice.git && cd email_microservice
+```
+
+### Environment Variables
+
+Copy env variables file and edit it in case of willing to change its configuration:
+
+```bash
+$ cp .env.example .env
+```
+
 ### Build
 
 - Build Docker image in detach mode and run it:
 
 ```bash
-$ docker-compose up --build -d
-```
-
-- Add/Update directory permissions on host machine (Laravel requires it):
-
-```bash
-$ sudo chmod 775 -R bootstrap/ storage/ && \
-sudo chown -R $USER:www-data bootstrap/ storage
+$ docker-compose -f infrastructure/docker-compose.yml up --build
 ```
 
 ## Project Definitions
 
-- **Docker:** Multi-stage build set in order to have steps
- for specific responsibilities. The first step is focused on installing PHP/Composer dependencies.
-The second step is focused on installing PHP extensions and configuring
-web/app server.
-  
+- **Docker:** All files related to **Docker** and **docker-compose**
+are set within `infrastructure` folder.
+
+The build process is **multi-stage**. It has two steps:
+
+- Installing PHP/Composer dependencies
+- Installing PHP extensions and configuring web/app server

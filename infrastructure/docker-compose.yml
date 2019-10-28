@@ -1,26 +1,25 @@
-version: "3.5"
+version: "3"
 
 services:
   email:
-    build: .
+    build:
+      context: ../
+      dockerfile: infrastructure/email_microservice/Dockerfile
     container_name: email_microservice
     working_dir: /var/www/html/email_microservice
     networks:
       - email_network
-    volumes:
-      - ./:/var/www/html/email_microservice
 
   nginx:
-    image: nginx:1.15
+    build:
+      context: ../
+      dockerfile: infrastructure/nginx/Dockerfile
     container_name: email_nginx
     working_dir: /var/www/html/email_microservice
     networks:
       - email_network
     ports:
       - "8080:80"
-    volumes:
-      - ./:/var/www/html/email_microservice
-      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
 
 networks:
   email_network:

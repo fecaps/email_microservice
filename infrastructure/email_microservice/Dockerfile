@@ -1,5 +1,8 @@
 # Stage 1 - Composer Dependencies
-FROM composer:1.9 as composer
+FROM composer:1.9 AS vendor
+
+# Composer Workdir
+WORKDIR /app
 
 # Copy Laravel and Composer files used when installing Dependencies
 COPY database/ database/
@@ -28,11 +31,19 @@ RUN apt-get update && apt-get install -y \
 RUN docker-php-ext-configure zip --with-libzip
 RUN docker-php-ext-install pdo_mysql zip
 
-# Set Workdir
+# Application Workdir
 WORKDIR /var/www/html/email_microservice
 
 # Copy project files
 COPY . /var/www/html/email_microservice
 
+# Update directory permissions
+RUN chown -R www-data:www-data \
+    /var/www/html/email_microservice/storage \
+    /var/www/html/email_microservice/bootstrap/cache
+
 # Copy dependencies from Composer stage
-COPY --from=composer ./app/vendor/ /var/www/html/email_microservice/vendor/
+COPY --from=vendor /app/vendor/ /var/www/html/email_microservice/vendor/
+
+# Generate Laravel Key
+RUN php artisan key:generate
