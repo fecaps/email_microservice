@@ -18,7 +18,11 @@
         "fzaninotto/faker": "^1.4",
         "mockery/mockery": "^1.0",
         "nunomaduro/collision": "^3.0",
-        "phpunit/phpunit": "^8.0"
+        "object-calisthenics/phpcs-calisthenics-rules": "^3.5",
+        "phpmd/phpmd": "^2.7",
+        "phpunit/phpunit": "^8.0",
+        "sebastian/phpcpd": "^4.1",
+        "squizlabs/php_codesniffer": "^3.5"
     },
     "config": {
         "optimize-autoloader": true,
@@ -56,6 +60,10 @@
         ],
         "post-create-project-cmd": [
             "@php artisan key:generate --ansi"
-        ]
+        ],
+        "codeStyle": "./vendor/bin/phpcs -sw --standard=PSR2 app/",
+        "copyPasteDetector": "vendor/bin/phpcpd --verbose app/",
+        "messDetector": "vendor/bin/phpmd app/ text codesize",
+        "objectCalisthenics": "vendor/bin/phpcs app/ -sp --standard=vendor/object-calisthenics/phpcs-calisthenics-rules/src/ObjectCalisthenics/ruleset.xml"
     }
 }

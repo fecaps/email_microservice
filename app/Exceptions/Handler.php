@@ -72,15 +72,14 @@ class Handler extends ExceptionHandler
      *
      * @return Response
      */
-    private function renderResourceNotFound (): Response {
-        return response()
-            ->json([
-                'message' => 'Resource Not Found',
-                'errors' => [
-                    'http_method;http_headers;http_url' =>
-                        'Resource not found for this HTTP method, headers and url'
-                ]
-            ], self::DEFAULT_NOT_FOUND_HTTP_CODE
-        );
+    private function renderResourceNotFound(): Response
+    {
+        return response()->json([
+            'message' => 'Resource Not Found',
+            'errors' => [
+                'http_method;http_headers;http_url' =>
+                    'Resource not found for this HTTP method, headers and url'
+            ]
+        ], self::DEFAULT_NOT_FOUND_HTTP_CODE);
     }
 }
