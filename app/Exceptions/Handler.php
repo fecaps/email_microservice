@@ -4,9 +4,15 @@ namespace App\Exceptions;
 
 use Exception;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\HttpFoundation\Response;
 
 class Handler extends ExceptionHandler
 {
+    const DEFAULT_NOT_FOUND_HTTP_CODE = 404;
+
     /**
      * A list of the exception types that are not reported.
      *
@@ -42,10 +48,34 @@ class Handler extends ExceptionHandler
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \Exception  $exception
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function render($request, Exception $exception)
     {
+        if ($exception instanceof NotFoundHttpException) {
+            return $this->renderNotFoundResource();
+        }
+
+        if ($exception instanceof ModelNotFoundException) {
+            return $this->renderNotFoundResource();
+        }
+
+        if ($exception instanceof  MethodNotAllowedHttpException) {
+            return $this->renderNotFoundResource();
+        }
+
         return parent::render($request, $exception);
+    }
+
+    private function renderNotFoundResource (): Response {
+        return response()
+            ->json([
+                'message' => 'Page Not Found',
+                'errors' => [
+                    'HTTP_METHOD;URL' =>
+                        'HTTP Method invalid and/or resource not found'
+                ]
+            ], self::DEFAULT_NOT_FOUND_HTTP_CODE
+        );
     }
 }
