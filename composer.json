@@ -14,10 +14,12 @@
         "laravel/tinker": "^1.0"
     },
     "require-dev": {
+        "brainmaestro/composer-git-hooks": "^2.8",
         "facade/ignition": "^1.4",
         "fzaninotto/faker": "^1.4",
         "mockery/mockery": "^1.0",
         "nunomaduro/collision": "^3.0",
+        "nunomaduro/larastan": "^0.4.3",
         "object-calisthenics/phpcs-calisthenics-rules": "^3.5",
         "phpmd/phpmd": "^2.7",
         "phpunit/phpunit": "^8.0",
@@ -32,6 +34,22 @@
     "extra": {
         "laravel": {
             "dont-discover": []
+        },
+        "hooks": {
+            "pre-commit": [
+                "composer run-script codeStyle",
+                "composer run-script copyPasteDetector",
+                "composer run-script messDetector",
+                "composer run-script objectCalisthenics",
+                "composer run-script errorsAnalyse"
+            ],
+            "pre-push": [
+                "composer run-script codeStyle",
+                "composer run-script copyPasteDetector",
+                "composer run-script messDetector",
+                "composer run-script objectCalisthenics",
+                "composer run-script errorsAnalyse"
+            ]
         }
     },
     "autoload": {
@@ -64,6 +82,7 @@
         "codeStyle": "./vendor/bin/phpcs -sw --standard=PSR2 app/",
         "copyPasteDetector": "vendor/bin/phpcpd --verbose app/",
         "messDetector": "vendor/bin/phpmd app/ text codesize",
-        "objectCalisthenics": "vendor/bin/phpcs app/ -sp --standard=vendor/object-calisthenics/phpcs-calisthenics-rules/src/ObjectCalisthenics/ruleset.xml"
+        "objectCalisthenics": "vendor/bin/phpcs app/ -sp --standard=vendor/object-calisthenics/phpcs-calisthenics-rules/src/ObjectCalisthenics/ruleset.xml",
+        "errorsAnalyse": "php artisan code:analyse"
     }
 }
