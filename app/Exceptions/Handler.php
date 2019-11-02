@@ -53,27 +53,32 @@ class Handler extends ExceptionHandler
     public function render($request, Exception $exception)
     {
         if ($exception instanceof NotFoundHttpException) {
-            return $this->renderNotFoundResource();
+            return $this->renderResourceNotFound();
         }
 
         if ($exception instanceof ModelNotFoundException) {
-            return $this->renderNotFoundResource();
+            return $this->renderResourceNotFound();
         }
 
         if ($exception instanceof  MethodNotAllowedHttpException) {
-            return $this->renderNotFoundResource();
+            return $this->renderResourceNotFound();
         }
 
         return parent::render($request, $exception);
     }
 
-    private function renderNotFoundResource (): Response {
+    /**
+     * Render Resource Not found
+     *
+     * @return Response
+     */
+    private function renderResourceNotFound (): Response {
         return response()
             ->json([
-                'message' => 'Page Not Found',
+                'message' => 'Resource Not Found',
                 'errors' => [
-                    'HTTP_METHOD;URL' =>
-                        'HTTP Method invalid and/or resource not found'
+                    'http_method;http_headers;http_url' =>
+                        'Resource not found for this HTTP method, headers and url'
                 ]
             ], self::DEFAULT_NOT_FOUND_HTTP_CODE
         );
