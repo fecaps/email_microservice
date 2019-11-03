@@ -48,7 +48,8 @@
                 "composer run-script copyPasteDetector",
                 "composer run-script messDetector",
                 "composer run-script objectCalisthenics",
-                "composer run-script errorsAnalyse"
+                "composer run-script errorsAnalyse",
+                "docker exec email_microservice ./vendor/bin/phpunit"
             ]
         }
     },
@@ -79,10 +80,10 @@
         "post-create-project-cmd": [
             "@php artisan key:generate --ansi"
         ],
-        "codeStyle": "./vendor/bin/phpcs -sw --standard=PSR2 app/",
-        "copyPasteDetector": "vendor/bin/phpcpd --verbose app/",
-        "messDetector": "vendor/bin/phpmd app/ text codesize",
-        "objectCalisthenics": "vendor/bin/phpcs app/ -sp --standard=vendor/object-calisthenics/phpcs-calisthenics-rules/src/ObjectCalisthenics/ruleset.xml",
-        "errorsAnalyse": "php artisan code:analyse"
+        "codeStyle": "docker exec email_microservice ./vendor/bin/phpcs -sw --standard=PSR2 app/",
+        "copyPasteDetector": "docker exec email_microservice vendor/bin/phpcpd --verbose app/",
+        "messDetector": "docker exec email_microservice vendor/bin/phpmd app/ text codesize",
+        "objectCalisthenics": "docker exec email_microservice vendor/bin/phpcs app/ -sp --standard=vendor/object-calisthenics/phpcs-calisthenics-rules/src/ObjectCalisthenics/ruleset.xml",
+        "errorsAnalyse": "docker exec email_microservice php artisan code:analyse"
     }
 }
