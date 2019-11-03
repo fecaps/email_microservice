@@ -16,6 +16,7 @@
     "require-dev": {
         "brainmaestro/composer-git-hooks": "^2.8",
         "facade/ignition": "^1.4",
+        "friendsofphp/php-cs-fixer": "^2.16",
         "fzaninotto/faker": "^1.4",
         "mockery/mockery": "^1.0",
         "nunomaduro/collision": "^3.0",
@@ -49,7 +50,8 @@
                 "composer run-script messDetector",
                 "composer run-script objectCalisthenics",
                 "composer run-script errorsAnalyse",
-                "docker exec email_microservice ./vendor/bin/phpunit"
+                "composer run-script tests",
+                "composer run-script showCoverage"
             ]
         }
     },
@@ -84,6 +86,9 @@
         "copyPasteDetector": "docker exec email_microservice vendor/bin/phpcpd --verbose app/",
         "messDetector": "docker exec email_microservice vendor/bin/phpmd app/ text codesize",
         "objectCalisthenics": "docker exec email_microservice vendor/bin/phpcs app/ -sp --standard=vendor/object-calisthenics/phpcs-calisthenics-rules/src/ObjectCalisthenics/ruleset.xml",
-        "errorsAnalyse": "docker exec email_microservice php artisan code:analyse"
+        "errorsAnalyse": "docker exec email_microservice php artisan code:analyse",
+        "fixStyle": "docker exec email_microservice php ./vendor/bin/php-cs-fixer fix ./app --verbose --diff",
+        "tests": "docker exec email_microservice ./vendor/bin/phpunit",
+        "showCoverage": "docker exec email_microservice cat report/txt-report"
     }
 }

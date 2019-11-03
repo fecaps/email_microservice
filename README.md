@@ -10,7 +10,6 @@
     1. [Composer Scripts](#composer-scripts)
     1. [Tests](#tests)
     1. [Git Hooks](#git-hooks)
-1. [Local Usage](#local-usage)
 1. [Project Definitions](#project-definitions)
 
 ## Setup
@@ -67,23 +66,28 @@ docker exec email_microservice composer run-script objectCalisthenics
 
 docker exec email_microservice composer run-script errorsAnalyse
 # errors analyse
+
+docker exec email_microservice composer run-script fixStyle
+# fix style
 ``` 
 
 ### Tests
 
 *PS.: It requires the container running*
 
+- Running tests:
+
 ```bash
-$ docker exec email_microservice ./vendor/bin/phpunit
+$ docker exec email_microservice tests
 ```
 
 The tests generate a HTML and TXT reports which use **XDebug** and it's
 located on `report` folder.
 
-To see the text report use:
+- Showing code coverage in TXT:
 
 ```bash
-$ docker exec -it email_microservice cat report/txt-report
+$ docker exec email_microservice showCoverage
 ```
 
 ### Git Hooks
@@ -97,15 +101,16 @@ and **testing scripts**.
     - `messDetector`
     - `objectCalisthenics`
     - `errorsAnalyse`
- 
+
+
 - `pre-push`:
     - `codeStyle`
     - `copyPasteDetector`
     - `messDetector`
     - `objectCalisthenics`
     - `errorsAnalyse`
-    - `phpunit`
-
+    - `tests`
+    - `showCoverage`
 
 ## Project Definitions
 
