@@ -27,6 +27,8 @@
     <logging>
         <log type="coverage-html" target="./report"
              lowUpperBound="50" highLowerBound="80" />
+        <log type="coverage-text" target="./report/txt-report"
+             lowUpperBound="50" highLowerBound="80" />
     </logging>
     <php>
         <server name="APP_ENV" value="testing"/>
