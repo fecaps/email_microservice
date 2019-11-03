@@ -15,7 +15,7 @@ final class EmailTest extends TestCase
     public function testInvalidPayloadsForEmailsResource($formInputValue): void
     {
         $response = $this
-            ->json('POST', 'api/emails', $formInputValue);
+            ->json('POST', 'emails', $formInputValue);
 
         $response->assertStatus(422)
             ->assertHeader(
@@ -35,7 +35,7 @@ final class EmailTest extends TestCase
     public function testInvalidHttpMethodForEmailsResource(): void
     {
         $response = $this
-            ->json('PUT', 'api/emails', []);
+            ->json('PUT', 'emails', []);
 
         $response->assertStatus(405)
             ->assertHeader(
@@ -61,7 +61,7 @@ final class EmailTest extends TestCase
     public function testInvalidRouteForEmailsResource(): void
     {
         $response = $this
-            ->json('PUT', 'api/emails2', []);
+            ->json('PUT', 'emails2', []);
 
         $response->assertStatus(404)
             ->assertHeader(

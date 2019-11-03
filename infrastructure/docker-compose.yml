@@ -6,6 +6,8 @@ services:
       context: ../
       dockerfile: infrastructure/email_microservice/Dockerfile.dev
     container_name: email_microservice
+    volumes:
+      - "../report:/var/www/html/email_microservice/report"
     networks:
       - email_network
 

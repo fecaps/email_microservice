@@ -43,7 +43,7 @@ $ docker-compose -f infrastructure/docker-compose.yml up --build -d
 
 The default API host:port is:
 
-http://localhost:8080/api
+http://localhost:8080
 
 ## Composer Scripts
 
@@ -52,22 +52,22 @@ The project has these `composer` scripts:
 *PS.: It requires the container running*
  
 ```bash
-docker exec email_microservice composer run-script codeStyle
+composer run-script codeStyle
 # code style check
 
-docker exec email_microservice composer run-script copyPasteDetector
+composer run-script copyPasteDetector
 # mess detector
 
-docker exec email_microservice composer run-script messDetector
+composer run-script messDetector
 # copy/paste detector
 
-docker exec email_microservice composer run-script objectCalisthenics
+composer run-script objectCalisthenics
 # object calisthenics rules
 
-docker exec email_microservice composer run-script errorsAnalyse
+composer run-script errorsAnalyse
 # errors analyse
 
-docker exec email_microservice composer run-script fixStyle
+composer run-script fixStyle
 # fix style
 ``` 
 
@@ -78,7 +78,7 @@ docker exec email_microservice composer run-script fixStyle
 - Running tests:
 
 ```bash
-$ docker exec email_microservice tests
+$ composer run-script tests
 ```
 
 The tests generate a HTML and TXT reports which use **XDebug** and it's
@@ -87,7 +87,14 @@ located on `report` folder.
 - Showing code coverage in TXT:
 
 ```bash
-$ docker exec email_microservice showCoverage
+$ composer run-script showCoverage
+```
+
+In case of willing to see it in HTML, open `report/index.html`
+file in host machine. Example:
+
+```bash
+$ google-chrome report/index.html
 ```
 
 ### Git Hooks
