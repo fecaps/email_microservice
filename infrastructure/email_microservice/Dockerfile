@@ -25,7 +25,9 @@ RUN apt-get update && apt-get install -y \
     git \
     libzip-dev \
     zip \
-    unzip
+    unzip && \
+    pecl install xdebug && \
+    docker-php-ext-enable xdebug
 
 # Install PHP extensions
 RUN docker-php-ext-configure zip --with-libzip
@@ -36,6 +38,9 @@ WORKDIR /var/www/html/email_microservice
 
 # Copy project files
 COPY . /var/www/html/email_microservice
+
+# Copy XDebug file
+COPY ./infrastructure/email_microservice/xdebug.ini /usr/local/etc/php7.3/conf.d/
 
 # Update directory permissions
 RUN chown -R www-data:www-data \
