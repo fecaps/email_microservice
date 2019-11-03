@@ -6,7 +6,6 @@ services:
       context: ../
       dockerfile: infrastructure/email_microservice/Dockerfile
     container_name: email_microservice
-    working_dir: /var/www/html/email_microservice
     networks:
       - email_network
 
@@ -15,7 +14,6 @@ services:
       context: ../
       dockerfile: infrastructure/nginx/Dockerfile
     container_name: email_nginx
-    working_dir: /var/www/html/email_microservice
     networks:
       - email_network
     ports:
