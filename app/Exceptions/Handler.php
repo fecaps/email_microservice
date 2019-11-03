@@ -4,14 +4,14 @@ namespace App\Exceptions;
 
 use Exception;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpFoundation\Response;
 
 class Handler extends ExceptionHandler
 {
-    const DEFAULT_NOT_FOUND_HTTP_CODE = 404;
+    const NOT_FOUND_HTTP_CODE = 404;
+    const METHOD_NOT_ALLOWED_HTTP_CODE = 405;
 
     /**
      * A list of the exception types that are not reported.
@@ -56,12 +56,8 @@ class Handler extends ExceptionHandler
             return $this->renderResourceNotFound();
         }
 
-        if ($exception instanceof ModelNotFoundException) {
-            return $this->renderResourceNotFound();
-        }
-
-        if ($exception instanceof  MethodNotAllowedHttpException) {
-            return $this->renderResourceNotFound();
+        if ($exception instanceof MethodNotAllowedHttpException) {
+            return $this->renderResourceNotAllowed();
         }
 
         return parent::render($request, $exception);
@@ -77,9 +73,25 @@ class Handler extends ExceptionHandler
         return response()->json([
             'message' => 'Resource Not Found',
             'errors' => [
-                'http_method;http_headers;http_url' =>
-                    'Resource not found for this HTTP method, headers and url'
+                'http_headers;url' =>
+                    'Resource not found for this HTTP headers and URL'
             ]
-        ], self::DEFAULT_NOT_FOUND_HTTP_CODE);
+        ], self::NOT_FOUND_HTTP_CODE);
+    }
+
+    /**
+     * Render Resource Not found
+     *
+     * @return Response
+     */
+    private function renderResourceNotAllowed(): Response
+    {
+        return response()->json([
+            'message' => 'Resource Not Allowed',
+            'errors' => [
+                'http_method;http_headers' =>
+                    'Resource not allowed for this HTTP method and HTTP headers'
+            ]
+        ], self::METHOD_NOT_ALLOWED_HTTP_CODE);
     }
 }
