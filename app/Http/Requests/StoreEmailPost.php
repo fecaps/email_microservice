@@ -33,6 +33,7 @@ class StoreEmailPost extends FormRequest
             'to.name' => 'required|string|max:255',
             'subject' => 'required|string|max:255',
             'textPart' => 'required|string',
+            'htmlPart' => 'required|string'
         ];
     }
 }

@@ -24,7 +24,7 @@ final class EmailTest extends TestCase
             ->assertJsonStructure(
                 [ 'message', 'errors' ], $response->json()
             )
-            ->assertJsonCount(8, 'errors');
+            ->assertJsonCount(9, 'errors');
     }
 
     /**
@@ -107,6 +107,7 @@ final class EmailTest extends TestCase
                 ],
                 'subject' => -10,
                 'textPart' => new \DateTime(),
+                'htmlPart' => function () {}
             ]
         ];
     }
