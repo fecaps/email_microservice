@@ -48,3 +48,7 @@ COPY --from=vendor /app/vendor/ /var/www/html/email_microservice/vendor/
 
 # Generate Laravel Key
 RUN php artisan key:generate
+
+# Clean Laravel Config
+RUN php artisan config:clear
+RUN php artisan clear-compiled
