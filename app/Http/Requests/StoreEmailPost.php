@@ -29,8 +29,8 @@ class StoreEmailPost extends FormRequest
             'from.email' => 'required|email|max:255',
             'from.name' => 'required|string|max:255',
             'to' => 'required|array',
-            'to.email' => 'required|email|max:255',
-            'to.name' => 'required|string|max:255',
+            'to.*.email' => 'required|email|max:255',
+            'to.*.name' => 'required|string|max:255',
             'subject' => 'required|string|max:255',
             'textPart' => 'required|string',
             'htmlPart' => 'required|string'
