@@ -30,4 +30,10 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
+    'mailjet' => [
+        'key' => env('MAILJET_KEY'),
+        'secret' => env('MAILJET_SECRET'),
+        'performer' => env('MAILJET_CALL_PERFORMER'),
+        'version' => env('MAILJET_VERSION')
+    ],
 ];
