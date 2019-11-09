@@ -9,7 +9,7 @@ final class MailjetConnector implements Connector
 {
     private $client;
 
-    public function __construct (array $config)
+    public function __construct(array $config)
     {
         $this->client = new Client(
             $config['key'],
@@ -21,7 +21,7 @@ final class MailjetConnector implements Connector
         );
     }
 
-    public function getClient (): Client
+    public function getClient(): Client
     {
         return $this->client;
     }
