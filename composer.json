@@ -11,7 +11,8 @@
         "php": "^7.2",
         "fideloper/proxy": "^4.0",
         "laravel/framework": "^6.2",
-        "laravel/tinker": "^1.0"
+        "laravel/tinker": "^1.0",
+        "mailjet/mailjet-apiv3-php": "^1.4"
     },
     "require-dev": {
         "brainmaestro/composer-git-hooks": "^2.8",
@@ -87,7 +88,7 @@
         "messDetector": "docker exec email_microservice vendor/bin/phpmd app/ text codesize",
         "objectCalisthenics": "docker exec email_microservice vendor/bin/phpcs app/ -sp --standard=vendor/object-calisthenics/phpcs-calisthenics-rules/src/ObjectCalisthenics/ruleset.xml",
         "errorsAnalyse": "docker exec email_microservice php artisan code:analyse",
-        "fixStyle": "docker exec email_microservice php ./vendor/bin/php-cs-fixer fix ./app --verbose --diff",
+        "fixStyle": "docker exec email_microservice php ./vendor/bin/php-cs-fixer fix ./app",
         "tests": "docker exec email_microservice ./vendor/bin/phpunit",
         "showCoverage": "docker exec email_microservice cat report/txt-report"
     }

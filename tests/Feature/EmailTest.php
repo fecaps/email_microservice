@@ -7,27 +7,6 @@ use Tests\TestCase;
 final class EmailTest extends TestCase
 {
     /**
-     * Test invalid cases for email resource
-     *
-     * @dataProvider invalidEmails
-     * @return void
-     */
-    public function testInvalidPayloadsForEmailsResource($formInputValue): void
-    {
-        $response = $this
-            ->json('POST', 'emails', $formInputValue);
-
-        $response->assertStatus(422)
-            ->assertHeader(
-                'Content-Type', 'application/json'
-            )
-            ->assertJsonStructure(
-                [ 'message', 'errors' ], $response->json()
-            )
-            ->assertJsonCount(9, 'errors');
-    }
-
-    /**
      * Test invalid HTTP Method for emails resource
      *
      * @return void
@@ -79,35 +58,62 @@ final class EmailTest extends TestCase
             ], true);
     }
 
+    /**
+     * Test invalid cases for email resource
+     *
+     * @dataProvider invalidEmails
+     * @return void
+     */
+    public function testInvalidPayloadsForEmailsResource($emailData): void
+    {
+        $response = $this
+            ->json('POST', 'emails', $emailData);
+
+        $response->assertStatus(422)
+            ->assertHeader(
+                'Content-Type', 'application/json'
+            )
+            ->assertJsonStructure(
+                [ 'message', 'errors' ], $response->json()
+            )
+            ->assertJsonCount(9, 'errors');
+    }
+
     public function invalidEmails(): array
     {
         $defaultNumberValue = 1;
 
         return [
             [
-                'from' => [
-                    'email' => $defaultNumberValue,
-                    'name' => $defaultNumberValue
-                ],
-                'to' => [
-                    'email' => $defaultNumberValue,
-                    'name' => $defaultNumberValue
-                ],
-                'subject' => $defaultNumberValue,
-                'textPart' => $defaultNumberValue,
+                [
+                    'from' => [
+                        'email' => $defaultNumberValue,
+                        'name' => $defaultNumberValue
+                    ],
+                    'to' => [
+                        'email' => $defaultNumberValue,
+                        'name' => $defaultNumberValue
+                    ],
+                    'subject' => $defaultNumberValue,
+                    'textPart' => $defaultNumberValue,
+                    'htmlPart' => $defaultNumberValue,
+                ]
             ],
             [
-                'from' => [
-                    'email' => 'invalid',
-                    'name' => function () {}
-                ],
-                'to' => [
-                    'email' => function () {},
-                    'name' => str_repeat('a', 256)
-                ],
-                'subject' => -10,
-                'textPart' => new \DateTime(),
-                'htmlPart' => function () {}
+
+                [
+                        'from' => [
+                        'email' => 'invalid',
+                        'name' => function () {}
+                    ],
+                    'to' => [
+                        'email' => function () {},
+                        'name' => str_repeat('a', 256)
+                    ],
+                    'subject' => -10,
+                    'textPart' => new \DateTime(),
+                    'htmlPart' => function () {}
+                ]
             ]
         ];
     }
