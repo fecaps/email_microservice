@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Connectors\MailjetConnector;
+use App\Connectors\SendgridConnector;
 use Illuminate\Support\ServiceProvider;
 
 class EmailServiceProvider extends ServiceProvider
@@ -20,6 +21,14 @@ class EmailServiceProvider extends ServiceProvider
             $maijetConfig = $config->get('services.mailjet', []);
 
             return new MailjetConnector($maijetConfig);
+        });
+
+        $this->app->singleton(SendgridConnector::class, function ($app) {
+            $config = $app->make('config');
+
+            $sendgridConfig = $config->get('services.sendgrid', []);
+
+            return new SendgridConnector($sendgridConfig);
         });
     }
 
