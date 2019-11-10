@@ -13,7 +13,8 @@
         "fideloper/proxy": "^4.0",
         "laravel/framework": "^6.2",
         "laravel/tinker": "^1.0",
-        "mailjet/mailjet-apiv3-php": "^1.4"
+        "mailjet/mailjet-apiv3-php": "^1.4",
+        "sendgrid/sendgrid": "~7"
     },
     "require-dev": {
         "brainmaestro/composer-git-hooks": "^2.8",
