@@ -8,24 +8,18 @@ services:
     container_name: email_microservice
     volumes:
       - "../report:/var/www/html/email_microservice/report"
-#    networks:
-#      - email_network
 
   nginx:
     build:
       context: ../
       dockerfile: infrastructure/nginx/Dockerfile
     container_name: email_nginx
-#    networks:
-#      - email_network
     ports:
       - "8080:80"
 
   rabbitmq:
     image: rabbitmq:3.8-rc-management-alpine
     container_name: email_rabbitmq
-#    networks:
-#      - email_network
     networks:
       default:
         aliases:
@@ -33,7 +27,3 @@ services:
     ports:
       - "15672:15672"
       - "5672:5672"
-
-networks:
-  email_network:
-    driver: bridge

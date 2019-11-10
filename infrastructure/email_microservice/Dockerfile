@@ -26,11 +26,15 @@ RUN apt-get update && apt-get install -y \
     git \
     libzip-dev \
     zip \
-    unzip
+    unzip \
+    librabbitmq-dev \
+    libssh-dev && \
+    pecl install xdebug amqp
 
 # Install PHP extensions
 RUN docker-php-ext-configure zip --with-libzip
-RUN docker-php-ext-install pdo_mysql zip
+RUN docker-php-ext-install pdo_mysql zip bcmath sockets
+RUN docker-php-ext-enable amqp
 
 # Application Workdir
 WORKDIR /var/www/html/email_microservice
