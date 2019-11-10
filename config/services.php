@@ -36,4 +36,8 @@ return [
         'performer' => env('MAILJET_CALL_PERFORMER'),
         'version' => env('MAILJET_VERSION')
     ],
+
+    'sendgrid' => [
+        'key' => env('SENDGRID_API_KEY'),
+    ],
 ];
