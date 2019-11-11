@@ -61,7 +61,7 @@ final class EmailTest extends TestCase
     /**
      * Test invalid cases for email resource
      *
-     * @dataProvider invalidEmails
+     * @dataProvider \Tests\Feature\InvalidEmailsDataProvider::invalidEmails()
      * @return void
      */
     public function testInvalidPayloadsForEmailsResource($emailData): void
@@ -77,44 +77,5 @@ final class EmailTest extends TestCase
                 [ 'message', 'errors' ], $response->json()
             )
             ->assertJsonCount(9, 'errors');
-    }
-
-    public function invalidEmails(): array
-    {
-        $defaultNumberValue = 1;
-
-        return [
-            [
-                [
-                    'from' => [
-                        'email' => $defaultNumberValue,
-                        'name' => $defaultNumberValue
-                    ],
-                    'to' => [
-                        'email' => $defaultNumberValue,
-                        'name' => $defaultNumberValue
-                    ],
-                    'subject' => $defaultNumberValue,
-                    'textPart' => $defaultNumberValue,
-                    'htmlPart' => $defaultNumberValue,
-                ]
-            ],
-            [
-
-                [
-                        'from' => [
-                        'email' => 'invalid',
-                        'name' => function () {}
-                    ],
-                    'to' => [
-                        'email' => function () {},
-                        'name' => str_repeat('a', 256)
-                    ],
-                    'subject' => -10,
-                    'textPart' => new \DateTime(),
-                    'htmlPart' => function () {}
-                ]
-            ]
-        ];
     }
 }

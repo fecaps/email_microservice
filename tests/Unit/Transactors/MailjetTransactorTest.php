@@ -34,7 +34,7 @@ class MailjetTransactorTest extends TestCase
     /**
      * Payload Preparation test
      *
-     * @dataProvider emails
+     * @dataProvider \Tests\Unit\Transactors\ValidEmailsDataProvider::emails()
      * @param array  $email
      * @return void
      */
@@ -51,7 +51,7 @@ class MailjetTransactorTest extends TestCase
     /**
      * From Payload Preparation test
      *
-     * @dataProvider emails
+     * @dataProvider \Tests\Unit\Transactors\ValidEmailsDataProvider::emails()
      * @param array  $email
      * @return void
      */
@@ -65,7 +65,7 @@ class MailjetTransactorTest extends TestCase
     /**
      * To Payload Preparation test
      *
-     * @dataProvider emails
+     * @dataProvider \Tests\Unit\Transactors\ValidEmailsDataProvider::emails()
      * @param array  $email
      * @return void
      */
@@ -79,7 +79,7 @@ class MailjetTransactorTest extends TestCase
     /**
      * Subject Payload Preparation test
      *
-     * @dataProvider emails
+     * @dataProvider \Tests\Unit\Transactors\ValidEmailsDataProvider::emails()
      * @param array  $email
      * @return void
      */
@@ -93,7 +93,7 @@ class MailjetTransactorTest extends TestCase
     /**
      * TextPart Payload Preparation test
      *
-     * @dataProvider emails
+     * @dataProvider \Tests\Unit\Transactors\ValidEmailsDataProvider::emails()
      * @param array  $email
      * @return void
      */
@@ -107,7 +107,7 @@ class MailjetTransactorTest extends TestCase
     /**
      * HtmlPart Payload Preparation test
      *
-     * @dataProvider emails
+     * @dataProvider \Tests\Unit\Transactors\ValidEmailsDataProvider::emails()
      * @param array  $email
      * @return void
      */
@@ -121,7 +121,7 @@ class MailjetTransactorTest extends TestCase
     /**
      * Email Transactions test
      *
-     * @dataProvider emails
+     * @dataProvider \Tests\Unit\Transactors\ValidEmailsDataProvider::emails()
      * @param array  $email
      * @return void
      */
@@ -135,7 +135,7 @@ class MailjetTransactorTest extends TestCase
     /**
      * Email Invalid Transactions test
      *
-     * @dataProvider invalidEmails
+     * @dataProvider \Tests\Unit\Transactors\InvalidEmailsDataProvider::invalidEmails()
      * @param array  $email
      * @return void
      */
@@ -144,87 +144,5 @@ class MailjetTransactorTest extends TestCase
         $send = $this->transactor->send();
 
         $this->assertFalse($send);
-    }
-
-    public function emails(): array
-    {
-        return [
-            [
-                [
-                    'from' => [
-                        'email' => 'fellipecapelli@gmail.com',
-                        'name' => 'Fellipe Capelli'
-                    ],
-                    'to' => [
-                        [
-                            'email' => 'fellipe.capelli@outlook.com',
-                            'name' => 'Fellipe C. Fregoneze'
-                        ]
-                    ],
-                    'subject' => 'Mailjet Transactor 1',
-                    'textPart' => 'Hello, text part 1',
-                    'htmlPart' => 'Hello, HTML part 1',
-                ]
-            ],
-            [
-
-                [
-                    'from' => [
-                        'email' => 'fellipecapelli@gmail.com',
-                        'name' => 'Fellipe Capelli'
-                    ],
-                    'to' => [
-                        [
-                            'email' => 'fellipe.capelli@outlook.com',
-                            'name' => 'Fellipe C. Fregoneze'
-                        ]
-                    ],
-                    'subject' => 'Mailjet Transactor 2',
-                    'textPart' => 'Hello, text part 2',
-                    'htmlPart' => 'Hello, HTML part 2',
-                ]
-            ]
-        ];
-    }
-
-    public function invalidEmails(): array
-    {
-        return [
-            [
-                [
-                    'from' => [
-                        'email' => 'fellipe',
-                        'name' => 'Fellipe Capelli'
-                    ],
-                    'to' => [
-                        [
-                            'email' => 'fellipe.capelli@outlook.com',
-                            'name' => 'Fellipe C. Fregoneze'
-                        ]
-                    ],
-                    'subject' => 'Mailjet Transactor 1',
-                    'textPart' => 'Hello, text part 1',
-                    'htmlPart' => 'Hello, HTML part 1',
-                ]
-            ],
-            [
-
-                [
-                    'from' => [
-                        'email' => 'fellipecapelli@gmail.com',
-                        'name' => 'Fellipe Capelli'
-                    ],
-                    'to' => [
-                        [
-                            'email' => 'fellipe',
-                            'name' => 'Fellipe C. Fregoneze'
-                        ]
-                    ],
-                    'subject' => 'Mailjet Transactor 2',
-                    'textPart' => 'Hello, text part 2',
-                    'htmlPart' => 'Hello, HTML part 2',
-                ]
-            ]
-        ];
     }
 }
