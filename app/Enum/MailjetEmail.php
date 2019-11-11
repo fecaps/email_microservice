@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace App\Enum;
 
-class MailjetMessages
+class MailjetEmail
 {
     public const MESSAGES_KEY_MAILJET  = 'Messages';
     public const TO_KEY_MAILJET        = 'To';
