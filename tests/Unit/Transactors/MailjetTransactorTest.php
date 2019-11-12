@@ -127,9 +127,23 @@ class MailjetTransactorTest extends TestCase
      */
     public function testEmailTransactions(array $email) {
         $this->transactor->preparePayload($email);
-        $send = $this->transactor->send();
+        $send = $this->transactor->send(false);
 
         $this->assertTrue($send);
+    }
+
+    /**
+     * Skip Transactions test
+     *
+     * @dataProvider \Tests\Unit\Transactors\ValidEmailsDataProvider::emails()
+     * @param array  $email
+     * @return void
+     */
+    public function testSkipEmailTransactions(array $email) {
+        $this->transactor->preparePayload($email);
+        $send = $this->transactor->send(true);
+
+        $this->assertFalse($send);
     }
 
     /**
@@ -141,7 +155,7 @@ class MailjetTransactorTest extends TestCase
      */
     public function testInvalidEmailTransactions(array $email) {
         $this->transactor->preparePayload($email);
-        $send = $this->transactor->send();
+        $send = $this->transactor->send(false);
 
         $this->assertFalse($send);
     }
