@@ -7,5 +7,5 @@ abstract class Transactor
 {
     abstract public function preparePayload(array $inputData);
 
-    abstract public function send(bool $lastTransactorStatus = false): bool;
+    abstract public function send(): bool;
 }

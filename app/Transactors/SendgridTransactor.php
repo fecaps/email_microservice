@@ -85,12 +85,8 @@ final class SendgridTransactor extends Transactor
         );
     }
 
-    public function send(bool $lastTransactorStatus = false): bool
+    public function send(): bool
     {
-        if ($lastTransactorStatus) {
-            return false;
-        }
-
         try {
             $response = $this->client->send($this->email);
             return ($response->statusCode() === self::SUCCESSFULL_HTTP_CODE);

@@ -2,6 +2,8 @@
 
 namespace Tests\Unit\Transactors;
 
+use App\Connectors\SendgridConnector;
+use App\Transactors\SendgridTransactor;
 use Tests\TestCase;
 use App\Connectors\MailjetConnector;
 use App\Transactors\MailjetTransactor;
@@ -15,10 +17,14 @@ class MailjetTransactorTest extends TestCase
     {
         parent::setUp();
 
-        $config = config('services.mailjet');
-        $connector = new MailjetConnector($config);
+        $mailjetConfig = config('services.mailjet');
+        $mailjetConnector = new MailjetConnector($mailjetConfig);
 
-        $this->transactor = new MailjetTransactor($connector);
+        $sendgridConfig = config('services.sendgrid');
+        $sendgridConnector = new SendgridConnector($sendgridConfig);
+        $sendgridTransactor = new SendgridTransactor($sendgridConnector);
+
+        $this->transactor = new MailjetTransactor($mailjetConnector, $sendgridTransactor);
     }
 
     /**
@@ -127,23 +133,9 @@ class MailjetTransactorTest extends TestCase
      */
     public function testEmailTransactions(array $email) {
         $this->transactor->preparePayload($email);
-        $send = $this->transactor->send(false);
+        $send = $this->transactor->send();
 
         $this->assertTrue($send);
-    }
-
-    /**
-     * Skip Transactions test
-     *
-     * @dataProvider \Tests\Unit\Transactors\ValidEmailsDataProvider::emails()
-     * @param array  $email
-     * @return void
-     */
-    public function testSkipEmailTransactions(array $email) {
-        $this->transactor->preparePayload($email);
-        $send = $this->transactor->send(true);
-
-        $this->assertFalse($send);
     }
 
     /**
@@ -155,7 +147,7 @@ class MailjetTransactorTest extends TestCase
      */
     public function testInvalidEmailTransactions(array $email) {
         $this->transactor->preparePayload($email);
-        $send = $this->transactor->send(false);
+        $send = $this->transactor->send();
 
         $this->assertFalse($send);
     }

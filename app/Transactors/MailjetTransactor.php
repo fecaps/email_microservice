@@ -11,15 +11,21 @@ use App\Enum\MailjetEmail;
 final class MailjetTransactor extends Transactor
 {
     private $client;
+    private $sendgridTransactor;
     private $messageBody = [];
+    private $inputData;
 
-    public function __construct(MailjetConnector $maijetConnector)
-    {
+    public function __construct(
+        MailjetConnector $maijetConnector,
+        SendgridTransactor $sendgridTransactor
+    ) {
         $this->client = $maijetConnector->getClient();
+        $this->sendgridTransactor = $sendgridTransactor;
     }
 
     public function preparePayload(array $inputData): array
     {
+        $this->inputData = $inputData;
         $this->messageBody[MailjetEmail::MESSAGES_KEY_MAILJET] = [];
 
         foreach ($inputData as $key => $value) {
@@ -73,15 +79,18 @@ final class MailjetTransactor extends Transactor
         return $userPayload;
     }
 
-    public function send(bool $lastTransactorStatus = false): bool
+    public function send(): bool
     {
-        if ($lastTransactorStatus) {
-            return false;
-        }
-
         $response = $this->client
             ->post(Resources::$Email, [ 'body' => $this->messageBody ]);
 
-        return $response->success();
+        $status = $response->success();
+
+        if ($status) {
+            return $status;
+        }
+
+        $this->sendgridTransactor->preparePayload($this->inputData);
+        return $this->sendgridTransactor->send();
     }
 }
