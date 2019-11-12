@@ -8,7 +8,7 @@ use App\Enum\Email;
 use Exception;
 use SendGrid\Mail\Mail;
 
-final class SendgridTransactor implements Transactor
+final class SendgridTransactor extends Transactor
 {
     private const SUCCESSFULL_HTTP_CODE = 202;
     private $client;
@@ -85,8 +85,12 @@ final class SendgridTransactor implements Transactor
         );
     }
 
-    public function send(): bool
+    public function send(bool $lastTransactorStatus = false): bool
     {
+        if ($lastTransactorStatus) {
+            return false;
+        }
+
         try {
             $response = $this->client->send($this->email);
             return ($response->statusCode() === self::SUCCESSFULL_HTTP_CODE);

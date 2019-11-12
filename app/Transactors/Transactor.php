@@ -3,9 +3,9 @@ declare(strict_types=1);
 
 namespace App\Transactors;
 
-interface Transactor
+abstract class Transactor
 {
-    public function preparePayload(array $inputData);
+    abstract public function preparePayload(array $inputData);
 
-    public function send(): bool;
+    abstract public function send(bool $lastTransactorStatus = false): bool;
 }

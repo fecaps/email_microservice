@@ -8,7 +8,7 @@ use App\Connectors\MailjetConnector;
 use App\Enum\Email;
 use App\Enum\MailjetEmail;
 
-final class MailjetTransactor implements Transactor
+final class MailjetTransactor extends Transactor
 {
     private $client;
     private $messageBody = [];
@@ -73,8 +73,12 @@ final class MailjetTransactor implements Transactor
         return $userPayload;
     }
 
-    public function send(): bool
+    public function send(bool $lastTransactorStatus = false): bool
     {
+        if ($lastTransactorStatus) {
+            return false;
+        }
+
         $response = $this->client
             ->post(Resources::$Email, [ 'body' => $this->messageBody ]);
 
