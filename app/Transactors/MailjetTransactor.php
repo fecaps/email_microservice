@@ -81,16 +81,21 @@ final class MailjetTransactor extends Transactor
 
     public function send(): bool
     {
-        $response = $this->client
-            ->post(Resources::$Email, [ 'body' => $this->messageBody ]);
+        try {
+            $response = $this->client
+                ->post(Resources::$Email, ['body' => $this->messageBody]);
 
-        $status = $response->success();
+            $status = $response->success();
 
-        if ($status) {
-            return $status;
+            if ($status) {
+                return $status;
+            }
+
+            $this->sendgridTransactor->preparePayload($this->inputData);
+            return $this->sendgridTransactor->send();
+        } catch (\Exception $exception) {
+            $this->sendgridTransactor->preparePayload($this->inputData);
+            return $this->sendgridTransactor->send();
         }
-
-        $this->sendgridTransactor->preparePayload($this->inputData);
-        return $this->sendgridTransactor->send();
     }
 }

@@ -2,9 +2,9 @@
 
 namespace Tests\Unit\Transactors;
 
+use Tests\TestCase;
 use App\Connectors\SendgridConnector;
 use App\Transactors\SendgridTransactor;
-use Tests\TestCase;
 use App\Connectors\MailjetConnector;
 use App\Transactors\MailjetTransactor;
 
