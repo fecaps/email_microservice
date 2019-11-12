@@ -1,16 +1,16 @@
 <?php
 
-namespace Tests\Unit\Transactors;
+namespace Tests\Unit\DataProviders;
 
-final class InvalidEmailsDataProvider
+final class ValidEmailsDataProvider
 {
-    public function invalidEmails(): array
+    public function emails(): array
     {
         return [
             [
                 [
                     'from' => [
-                        'email' => 'fellipe',
+                        'email' => 'fellipecapelli@gmail.com',
                         'name' => 'Fellipe Capelli'
                     ],
                     'to' => [
@@ -33,7 +33,7 @@ final class InvalidEmailsDataProvider
                     ],
                     'to' => [
                         [
-                            'email' => 'fellipe',
+                            'email' => 'fellipe.capelli@outlook.com',
                             'name' => 'Fellipe C. Fregoneze'
                         ]
                     ],

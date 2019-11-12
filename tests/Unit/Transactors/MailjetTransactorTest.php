@@ -40,7 +40,7 @@ class MailjetTransactorTest extends TestCase
     /**
      * Payload Preparation test
      *
-     * @dataProvider \Tests\Unit\Transactors\ValidEmailsDataProvider::emails()
+     * @dataProvider \Tests\Unit\DataProviders\ValidEmailsDataProvider::emails()
      * @param array  $email
      * @return void
      */
@@ -57,7 +57,7 @@ class MailjetTransactorTest extends TestCase
     /**
      * From Payload Preparation test
      *
-     * @dataProvider \Tests\Unit\Transactors\ValidEmailsDataProvider::emails()
+     * @dataProvider \Tests\Unit\DataProviders\ValidEmailsDataProvider::emails()
      * @param array  $email
      * @return void
      */
@@ -71,7 +71,7 @@ class MailjetTransactorTest extends TestCase
     /**
      * To Payload Preparation test
      *
-     * @dataProvider \Tests\Unit\Transactors\ValidEmailsDataProvider::emails()
+     * @dataProvider \Tests\Unit\DataProviders\ValidEmailsDataProvider::emails()
      * @param array  $email
      * @return void
      */
@@ -85,7 +85,7 @@ class MailjetTransactorTest extends TestCase
     /**
      * Subject Payload Preparation test
      *
-     * @dataProvider \Tests\Unit\Transactors\ValidEmailsDataProvider::emails()
+     * @dataProvider \Tests\Unit\DataProviders\ValidEmailsDataProvider::emails()
      * @param array  $email
      * @return void
      */
@@ -99,7 +99,7 @@ class MailjetTransactorTest extends TestCase
     /**
      * TextPart Payload Preparation test
      *
-     * @dataProvider \Tests\Unit\Transactors\ValidEmailsDataProvider::emails()
+     * @dataProvider \Tests\Unit\DataProviders\ValidEmailsDataProvider::emails()
      * @param array  $email
      * @return void
      */
@@ -113,7 +113,7 @@ class MailjetTransactorTest extends TestCase
     /**
      * HtmlPart Payload Preparation test
      *
-     * @dataProvider \Tests\Unit\Transactors\ValidEmailsDataProvider::emails()
+     * @dataProvider \Tests\Unit\DataProviders\ValidEmailsDataProvider::emails()
      * @param array  $email
      * @return void
      */
@@ -127,7 +127,7 @@ class MailjetTransactorTest extends TestCase
     /**
      * Email Transactions test
      *
-     * @dataProvider \Tests\Unit\Transactors\ValidEmailsDataProvider::emails()
+     * @dataProvider \Tests\Unit\DataProviders\ValidEmailsDataProvider::emails()
      * @param array  $email
      * @return void
      */
@@ -141,7 +141,7 @@ class MailjetTransactorTest extends TestCase
     /**
      * Email Invalid Transactions test
      *
-     * @dataProvider \Tests\Unit\Transactors\InvalidEmailsDataProvider::invalidEmails()
+     * @dataProvider \Tests\Unit\DataProviders\InvalidEmailsDataProvider::invalidEmails()
      * @param array  $email
      * @return void
      */
