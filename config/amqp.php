@@ -41,7 +41,7 @@ return [
             'persistent'            => true,
 
             'qos'                   => false,
-            'qos_prefetch_size'     => 0,
+            'qos_prefetch_size'     => 1,
             'qos_prefetch_count'    => 1,
             'qos_a_global'          => false
         ],
