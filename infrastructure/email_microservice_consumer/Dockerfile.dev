@@ -15,11 +15,10 @@ RUN composer install \
     --no-interaction \
     --no-plugins \
     --no-scripts \
-    --prefer-dist \
-    --no-dev
+    --prefer-dist
 
-# Stage 2 - Email microservice
-FROM php:7.3-fpm
+# Stage 2 - Email microservice Consumer
+FROM php:7.3-cli
 
 # Install Dependencies
 RUN apt-get update && apt-get install -y \
@@ -29,7 +28,8 @@ RUN apt-get update && apt-get install -y \
     unzip \
     librabbitmq-dev \
     libssh-dev && \
-    pecl install xdebug amqp
+    pecl install xdebug amqp && \
+    docker-php-ext-enable xdebug
 
 # Install PHP extensions
 RUN docker-php-ext-configure zip --with-libzip
@@ -41,6 +41,9 @@ WORKDIR /var/www/html/email_microservice
 
 # Copy project files
 COPY . /var/www/html/email_microservice
+
+# Copy XDebug file
+COPY ./infrastructure/xdebug/xdebug.ini /usr/local/etc/php7.3/conf.d/
 
 # Update directory permissions
 RUN chown -R www-data:www-data \
@@ -57,5 +60,9 @@ RUN php artisan key:generate
 RUN php artisan config:clear
 RUN php artisan clear-compiled
 
-# Port to expose
-EXPOSE 9000
+# Wait RabbitMQ
+ADD https://github.com/ufoscout/docker-compose-wait/releases/download/2.6.0/wait /wait
+RUN chmod +x /wait
+
+# Run consumer command
+CMD /wait && php artisan consumer:emails

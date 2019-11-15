@@ -8,12 +8,27 @@ services:
     container_name: email_microservice
     volumes:
       - "../report:/var/www/html/email_microservice/report"
+    environment:
+      WAIT_HOSTS: rabbitmq.dev:5672
+    restart: always
+
+  email_consumer:
+    build:
+      context: ../
+      dockerfile: infrastructure/email_microservice_consumer/Dockerfile.dev
+    container_name: email_microservice_consumer
+    volumes:
+      - "../report/Console:/var/www/html/email_microservice_consumer/report/Console"
+    environment:
+      WAIT_HOSTS: rabbitmq.dev:5672
+    restart: always
 
   nginx:
     build:
       context: ../
       dockerfile: infrastructure/nginx/Dockerfile
     container_name: email_nginx
+    restart: always
     ports:
       - "8080:80"
 

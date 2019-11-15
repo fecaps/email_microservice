@@ -43,7 +43,7 @@ WORKDIR /var/www/html/email_microservice
 COPY . /var/www/html/email_microservice
 
 # Copy XDebug file
-COPY ./infrastructure/email_microservice/xdebug.ini /usr/local/etc/php7.3/conf.d/
+COPY ./infrastructure/xdebug/xdebug.ini /usr/local/etc/php7.3/conf.d/
 
 # Update directory permissions
 RUN chown -R www-data:www-data \
@@ -59,3 +59,13 @@ RUN php artisan key:generate
 # Clean Laravel Config
 RUN php artisan config:clear
 RUN php artisan clear-compiled
+
+# Wait RabbitMQ
+ADD https://github.com/ufoscout/docker-compose-wait/releases/download/2.6.0/wait /wait
+RUN chmod +x /wait
+
+# Port to expose
+EXPOSE 9000
+
+# Run app server
+CMD /wait && php-fpm
