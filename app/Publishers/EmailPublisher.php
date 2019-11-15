@@ -2,44 +2,41 @@
 
 namespace App\Publishers;
 
+use App\Enum\EmailPublisher as EmailPublisherEnum;
+
 final class EmailPublisher
 {
-    private const DEFAULT_RETRY = 0;
-    private const DEFAULT_CONFIG = 'default';
-
-    private $queueName;
     private $routingKeyName;
+    private $exchangeName;
+    private $queueName;
 
     public function __construct()
     {
-        $this->queueName = env('RABBITMQ_QUEUE', self::DEFAULT_CONFIG);
-        $this->routingKeyName = env('RABBITMQ_ROUTING_KEY_NAME', self::DEFAULT_CONFIG);
+        $this->routingKeyName = env('RABBITMQ_ROUTING_KEY_NAME', EmailPublisherEnum::DEFAULT_ROUTING_KEY);
+        $this->exchangeName = env('RABBITMQ_EXCHANGE_NAME', EmailPublisherEnum::DEFAULT_EXCHANGE);
+        $this->queueName = env('RABBITMQ_QUEUE', EmailPublisherEnum::DEFAULT_QUEUE);
     }
 
     /**
      * Execute the job.
      *
      * @param array  $emailData
+     * @param int  $retries
      * @return void
      */
-    public function handle(array $emailData): void
+    public function handle(array $emailData, int $retries = EmailPublisherEnum::DEFAULT_RETRY): void
     {
-        $messageProperties = [
-            'content_type'  => 'text/plain',
-            'delivery_mode' => 2,
-            'x-retries'     => self::DEFAULT_RETRY,
+        $publisherData = [
+            'data'      => $emailData,
+            'retries' => $retries
         ];
-
-        $message = \Amqp::message(
-            json_encode($emailData),
-            $messageProperties
-        );
 
         \Amqp::publish(
             $this->routingKeyName,
-            $message,
+            json_encode($publisherData),
             [
-                'queue' => $this->queueName
+                'queue'     => $this->queueName,
+                'exchange'  => $this->exchangeName
             ]
         );
     }
