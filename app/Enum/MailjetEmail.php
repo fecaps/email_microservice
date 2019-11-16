@@ -11,6 +11,6 @@ class MailjetEmail
     public const NAME_KEY_MAILJET      = 'Name';
     public const FROM_KEY_MAILJET      = 'From';
     public const SUBJECT_KEY_MAILJET   = 'Subject';
-    public const TEXTPART_KEY_MAILJET  = 'TextPart';
-    public const HTMLPART_KEY_MAILJET  = 'HTMLPart';
+    public const TEXT_PART_KEY_MAILJET = 'TextPart';
+    public const HTML_PART_KEY_MAILJET = 'HTMLPart';
 }
