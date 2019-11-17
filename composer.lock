@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "afb8c842e6635c519e46237b617e9d16",
+    "content-hash": "a4c44f3ed7ce9ad4fc3792d0e8666c12",
     "packages": [
         {
             "name": "bschmitt/laravel-amqp",
