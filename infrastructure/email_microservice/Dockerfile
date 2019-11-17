@@ -27,13 +27,15 @@ RUN apt-get update && apt-get install -y \
     libzip-dev \
     zip \
     unzip \
+    libpq-dev \
     librabbitmq-dev \
     libssh-dev && \
     pecl install xdebug amqp
 
 # Install PHP extensions
 RUN docker-php-ext-configure zip --with-libzip
-RUN docker-php-ext-install pdo_mysql zip bcmath sockets
+RUN docker-php-ext-configure pgsql -with-pgsql=/usr/local/pgsql
+RUN docker-php-ext-install pdo pdo_mysql pdo_pgsql pgsql zip bcmath sockets
 RUN docker-php-ext-enable amqp
 
 # Application Workdir

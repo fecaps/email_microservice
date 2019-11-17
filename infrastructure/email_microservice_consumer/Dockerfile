@@ -27,13 +27,15 @@ RUN apt-get update && apt-get install -y \
     libzip-dev \
     zip \
     unzip \
+    libpq-dev \
     librabbitmq-dev \
     libssh-dev && \
     pecl install amqp
 
 # Install PHP extensions
 RUN docker-php-ext-configure zip --with-libzip
-RUN docker-php-ext-install pdo_mysql zip bcmath sockets
+RUN docker-php-ext-configure pgsql -with-pgsql=/usr/local/pgsql
+RUN docker-php-ext-install pdo pdo_mysql pdo_pgsql pgsql zip bcmath sockets
 RUN docker-php-ext-enable amqp
 
 # Application Workdir
@@ -61,5 +63,5 @@ RUN php artisan clear-compiled
 ADD https://github.com/ufoscout/docker-compose-wait/releases/download/2.6.0/wait /wait
 RUN chmod +x /wait
 
-# Run consumer command
-CMD /wait && php artisan consumer:emails
+# Run migrations and consumer command
+CMD /wait && php artisan migrate --force && php artisan consumer:emails

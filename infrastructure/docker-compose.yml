@@ -9,7 +9,7 @@ services:
       - "../report:/var/www/html/email_microservice/report"
       - "../storage/logs:/var/www/html/email_microservice/storage/logs"
     environment:
-      WAIT_HOSTS: rabbitmq.dev:5672
+      WAIT_HOSTS: rabbitmq.dev:5672, postgres:5432
     restart: always
 
   email_consumer:
@@ -20,7 +20,7 @@ services:
       - "../report:/var/www/html/email_microservice/report"
       - "../storage/logs:/var/www/html/email_microservice/storage/logs"
     environment:
-      WAIT_HOSTS: rabbitmq.dev:5672
+      WAIT_HOSTS: rabbitmq.dev:5672, postgres:5432
     restart: always
 
   nginx:
@@ -29,6 +29,8 @@ services:
       dockerfile: infrastructure/nginx/Dockerfile
     container_name: email_nginx
     restart: always
+    environment:
+      WAIT_HOSTS: rabbitmq.dev:5672, postgres:5432
     ports:
       - "8080:80"
 
@@ -45,6 +47,19 @@ services:
     ports:
       - "15672:15672"
       - "5672:5672"
+
+  postgres:
+    image: postgres
+    ports:
+      - "5432:5432"
+    networks:
+      default:
+        aliases:
+          - postgres.dev
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: email_service
 
 volumes:
   rabbitmq:
