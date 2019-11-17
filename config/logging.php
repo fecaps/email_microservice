@@ -95,6 +95,16 @@ return [
             'driver' => 'monolog',
             'handler' => NullHandler::class,
         ],
+
+        'publisher' => [
+            'driver' => 'single',
+            'path' => storage_path('logs/publisher.log'),
+        ],
+
+        'consumer' => [
+            'driver' => 'single',
+            'path' => storage_path('logs/consumer.log'),
+        ],
     ],
 
 ];

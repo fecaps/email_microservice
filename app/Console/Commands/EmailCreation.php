@@ -77,6 +77,7 @@ final class EmailCreation extends Command
             return $this->showErrors($validator);
         }
 
+        \Log::channel('publisher')->info('New message requested - Console');
         return $this->createEmail($emailData, $publisher);
     }
 

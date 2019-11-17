@@ -7,6 +7,7 @@
     1. [Environment Variables](#environment-variables)
     1. [Build](#build)
     1. [API](#api)
+    1. [Console](#console)
     1. [Composer Scripts](#composer-scripts)
     1. [Tests](#tests)
     1. [Git Hooks](#git-hooks)
@@ -16,6 +17,7 @@
     1. [Worker](#worker)
     1. [Queue](#queue)
     1. [Laravel - AMQP](#laravel---amqp)
+    1. [Logs](#logs)
     1. [Docker](#docker)
     1. [Scaling Up](#scaling-up)
 
@@ -58,11 +60,19 @@ The default API host:port is:
 
 http://localhost:8080
 
+## Console
+
+The console command responsible for sending emails to the queue:
+
+```bash
+composer run-script php artisan create:email
+``` 
+
 ## Composer Scripts
 
 The project has these `composer` scripts:
 
-*PS.: It requires the container running*
+*PS.: It requires the containers running*
  
 ```bash
 composer run-script codeStyle
@@ -217,6 +227,18 @@ when publishing or consuming a message.
 - Improve prefetch configuration for channels.
 - Add support for custom properties (headers) when publishing messages, this way can be
 possible to set messages TTL, retries, etc.
+
+### Logs
+
+As this microservice is still small there are no third-party services, such as Graylog
+(Mongo, Elasticsearch) to deal with logging. They are still managed through
+log files (which are docker volumes).
+
+Publisher logs:
+`/storage/logs/publisher.log`
+
+Consumer logs:
+`/storage/logs/consumer.log`
 
 ### Docker
 

@@ -49,6 +49,7 @@ COPY ./infrastructure/xdebug/xdebug.ini /usr/local/etc/php7.3/conf.d/
 RUN chown -R www-data:www-data \
     /var/www/html/email_microservice/storage \
     /var/www/html/email_microservice/bootstrap/cache
+RUN chmod -R 755 /var/www/html/email_microservice/storage
 
 # Copy dependencies from Composer stage
 COPY --from=vendor /app/vendor/ /var/www/html/email_microservice/vendor/

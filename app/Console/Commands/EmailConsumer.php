@@ -82,6 +82,13 @@ final class EmailConsumer extends Command
             if (isset($retries) && $retries >= $this->maxRetries) {
                 $this->info(EmailConsumerEnum::CONSUMER_REMOVED);
                 $resolver->reject($message);
+
+                $logMessage = sprintf(
+                    'Message removed from the queue. Message: %s',
+                    json_encode($arrayData)
+                );
+                \Log::consumer('consumer')->info($logMessage);
+
                 return;
             }
 
@@ -93,6 +100,12 @@ final class EmailConsumer extends Command
             }
 
             $resolver->acknowledge($message);
+            $logMessage = sprintf(
+                'Message resolved. Message: %s',
+                json_encode($arrayData)
+            );
+            \Log::channel('consumer')->info($logMessage);
+
             $this->info(EmailConsumerEnum::CONSUMER_ACK);
         } catch (\Exception $exception) {
             $this->retryMessage($resolver, $message);

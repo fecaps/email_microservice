@@ -44,13 +44,23 @@ final class EmailPublisher implements Publisher
             'retries'   => $retries,
         ];
 
+        $stringMessage = json_encode($publisherData);
+
         \Amqp::publish(
             $this->routingKeyName,
-            json_encode($publisherData),
+            $stringMessage,
             [
                 'queue'     => $this->queueName,
                 'exchange'  => $this->exchangeName
             ]
         );
+
+        $logMessage = sprintf(
+            'Message published to queue. Message: %s - Retries: %s',
+            $stringMessage,
+            $retries
+        );
+
+        \Log::channel('publisher')->info($logMessage);
     }
 }

@@ -20,6 +20,7 @@ class EmailController extends Controller
         StoreEmailPost $request,
         EmailPublisher $publisher
     ): JsonResponse {
+        \Log::channel('publisher')->info('New message requested - Web');
         $publisher->handle($request->all());
 
         return response()

@@ -7,6 +7,7 @@ services:
       dockerfile: infrastructure/email_microservice/Dockerfile.dev
     volumes:
       - "../report:/var/www/html/email_microservice/report"
+      - "../storage/logs:/var/www/html/email_microservice/storage/logs"
     environment:
       WAIT_HOSTS: rabbitmq.dev:5672
     restart: always
@@ -15,6 +16,9 @@ services:
     build:
       context: ../
       dockerfile: infrastructure/email_microservice_consumer/Dockerfile.dev
+    volumes:
+      - "../report:/var/www/html/email_microservice/report"
+      - "../storage/logs:/var/www/html/email_microservice/storage/logs"
     environment:
       WAIT_HOSTS: rabbitmq.dev:5672
     restart: always
