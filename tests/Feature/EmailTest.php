@@ -62,9 +62,10 @@ final class EmailTest extends TestCase
      * Test invalid cases for email resource
      *
      * @dataProvider \Tests\Feature\InvalidEmailsDataProvider::invalidEmails()
+     * @param array  $emailData
      * @return void
      */
-    public function testInvalidPayloadsForEmailsResource($emailData): void
+    public function testInvalidPayloadsForEmailsResource(array $emailData): void
     {
         $response = $this
             ->json('POST', 'emails', $emailData);
@@ -77,5 +78,27 @@ final class EmailTest extends TestCase
                 [ 'message', 'errors' ], $response->json()
             )
             ->assertJsonCount(8, 'errors');
+    }
+
+    /**
+     * Test valid cases for email resource
+     *
+     * @dataProvider \Tests\Feature\ValidEmailsDataProvider::emails()
+     * @param array  $emailData
+     * @return void
+     */
+    public function testValidPayloadsForEmailsResource(array $emailData): void
+    {
+        $response = $this
+            ->json('POST', 'emails', $emailData);
+
+        $response->assertStatus(201)
+            ->assertHeader(
+                'Content-Type', 'application/json'
+            )
+            ->assertJsonStructure(
+                [ 'data' ], $response->json()
+            )
+            ->assertJsonCount(4, 'data');
     }
 }

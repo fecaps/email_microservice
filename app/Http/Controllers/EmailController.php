@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreEmailPost;
-use App\Transactors\MailjetTransactor;
+use App\Publishers\EmailPublisher;
 use Illuminate\Http\JsonResponse;
 
 class EmailController extends Controller
@@ -13,17 +13,17 @@ class EmailController extends Controller
      * Store a newly created resource in storage.
      *
      * @param  StoreEmailPost  $request
-     * @param  MailjetTransactor  $transactor
+     * @param  EmailPublisher  $publisher
      * @return JsonResponse
      */
     public function store(
         StoreEmailPost $request,
-        MailjetTransactor $transactor
+        EmailPublisher $publisher
     ): JsonResponse {
-        $payload = $transactor->preparePayload($request->all());
+        $publisher->handle($request->all());
 
-        $payload->send();
-
-        return response()->json($request->all());
+        return response()
+            ->json([ 'data' => $request->all()])
+            ->setStatusCode(201);
     }
 }
