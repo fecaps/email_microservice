@@ -5,5 +5,9 @@ namespace App\Connectors;
 
 interface Connector
 {
+    /**
+     * Get client connection.
+     *
+     */
     public function getClient();
 }

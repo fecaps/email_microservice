@@ -17,8 +17,6 @@ services:
       context: ../
       dockerfile: infrastructure/email_microservice_consumer/Dockerfile.dev
     container_name: email_microservice_consumer
-    volumes:
-      - "../report/Console:/var/www/html/email_microservice_consumer/report/Console"
     environment:
       WAIT_HOSTS: rabbitmq.dev:5672
     restart: always
@@ -39,6 +37,7 @@ services:
       default:
         aliases:
           - rabbitmq.dev
+    restart: always
     ports:
       - "15672:15672"
       - "5672:5672"

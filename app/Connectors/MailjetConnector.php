@@ -9,6 +9,11 @@ final class MailjetConnector implements Connector
 {
     private $client;
 
+    /**
+     * Create Mailjet client connection.
+     *
+     * @param array  $config
+     */
     public function __construct(array $config)
     {
         $this->client = new Client(
@@ -21,6 +26,11 @@ final class MailjetConnector implements Connector
         );
     }
 
+    /**
+     * Get Mailjet client connection.
+     *
+     * @return Client
+     */
     public function getClient(): Client
     {
         return $this->client;
