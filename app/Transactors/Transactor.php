@@ -8,4 +8,6 @@ abstract class Transactor
     abstract public function preparePayload(array $inputData);
 
     abstract public function send(): bool;
+
+    abstract public function sendTrigger(): bool;
 }
