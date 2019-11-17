@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace App\Enum;
 
-class EmailConsumer
+final class EmailConsumer
 {
     public const DEFAULT_QUEUE          = 'email_queue';
     public const DEFAULT_MAX_RETRIES    = 5;

@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace App\Enum;
 
-class EmailPublisher
+final class EmailPublisher
 {
     public const DEFAULT_RETRY          = 0;
     public const DEFAULT_ROUTING_KEY    = 'email_rk';

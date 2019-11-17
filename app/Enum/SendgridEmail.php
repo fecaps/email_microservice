@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace App\Enum;
 
-class SendgridEmail
+final class SendgridEmail
 {
     public const SUCCESSFUL_HTTP_CODE = 202;
 }

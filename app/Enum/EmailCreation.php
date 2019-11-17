@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace App\Enum;
 
-class EmailCreation
+final class EmailCreation
 {
     public const START_MESSAGE      = 'Start command to create email';
     public const FROM_EMAIL_MESSAGE = 'What\'s the mail to send from';

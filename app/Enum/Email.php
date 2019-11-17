@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace App\Enum;
 
-class Email
+final class Email
 {
     public const FROM_KEY           = 'from';
     public const TO_KEY             = 'to';
