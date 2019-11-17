@@ -109,7 +109,7 @@ final class SendgridTransactor extends Transactor
     {
         try {
             $response = $this->client->send($this->email);
-            return ($response->statusCode() === SendgridEmail::SUCCESSFULL_HTTP_CODE);
+            return ($response->statusCode() === SendgridEmail::SUCCESSFUL_HTTP_CODE);
         } catch (Exception $exception) {
             return false;
         }
