@@ -34,7 +34,7 @@ class EmailWorkerTest extends TestCase
      *
      * @return void
      */
-    public function testReturnInstanceType()
+    public function testReturnInstanceType(): void
     {
         $this->assertInstanceOf(EmailWorker::class, $this->worker);
     }
@@ -46,9 +46,9 @@ class EmailWorkerTest extends TestCase
      * @param array  $email
      * @return void
      */
-    public function testEmailTransactions(array $email) {
+    public function testEmailTransactions(array $email): void
+    {
         $send = $this->worker->sendEmail($email);
-
         $this->assertTrue($send);
     }
 
@@ -59,9 +59,9 @@ class EmailWorkerTest extends TestCase
      * @param array  $email
      * @return void
      */
-    public function testInvalidEmailTransactions(array $email) {
+    public function testInvalidEmailTransactions(array $email): void
+    {
         $send = $this->worker->sendEmail($email);
-
         $this->assertFalse($send);
     }
 }

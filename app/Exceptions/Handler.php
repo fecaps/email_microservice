@@ -73,14 +73,13 @@ class Handler extends ExceptionHandler
         return response()->json([
             'message' => 'Resource Not Found',
             'errors' => [
-                'http_headers;url' =>
-                    'Resource not found for this HTTP headers and URL'
+                'http_headers;url' => 'Resource not found for this HTTP headers and URL'
             ]
         ], self::NOT_FOUND_HTTP_CODE);
     }
 
     /**
-     * Render Resource Not found
+     * Render Resource Not Allowed
      *
      * @return Response
      */
@@ -89,8 +88,7 @@ class Handler extends ExceptionHandler
         return response()->json([
             'message' => 'Resource Not Allowed',
             'errors' => [
-                'http_method;http_headers' =>
-                    'Resource not allowed for this HTTP method and HTTP headers'
+                'http_method;http_headers' => 'Resource not allowed for this HTTP method and HTTP headers'
             ]
         ], self::METHOD_NOT_ALLOWED_HTTP_CODE);
     }

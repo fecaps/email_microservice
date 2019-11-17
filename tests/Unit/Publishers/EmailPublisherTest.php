@@ -23,7 +23,7 @@ class EmailPublisherTest extends TestCase
      * @param array  $email
      * @return void
      */
-    public function testEmailTransactions(array $email) {
+    public function testEmailTransactions(array $email): void {
         $this->publisher->handle($email);
         $this->assertInstanceOf(EmailPublisher::class, $this->publisher);
     }

@@ -13,12 +13,10 @@ class SendgridConnectorTest extends TestCase
      *
      * @return void
      */
-    public function testReturnInstanceType()
+    public function testReturnInstanceType(): void
     {
         $config = config('services.sendgrid');
-
         $sendgrid = new SendgridConnector($config);
-
         $instanceType = $sendgrid->getClient();
 
         $this->assertInstanceOf(SendGrid::class, $instanceType);

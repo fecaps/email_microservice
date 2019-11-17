@@ -3,9 +3,9 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
+use App\Enum\EmailConsumer as EmailConsumerEnum;
 use App\Publishers\EmailPublisher;
 use App\Workers\EmailWorker;
-use App\Enum\EmailConsumer as EmailConsumerEnum;
 
 final class EmailConsumer extends Command
 {
@@ -39,8 +39,15 @@ final class EmailConsumer extends Command
     {
         parent::__construct();
 
-        $this->queueName = env('RABBITMQ_QUEUE', EmailConsumerEnum::DEFAULT_QUEUE);
-        $this->maxRetries = (int)(env('RABBITMQ_MAXIMUM_RETRIES', EmailConsumerEnum::DEFAULT_MAX_RETRIES));
+        $this->queueName = env(
+            'RABBITMQ_QUEUE',
+            EmailConsumerEnum::DEFAULT_QUEUE
+        );
+
+        $this->maxRetries = (int) (env(
+            'RABBITMQ_MAXIMUM_RETRIES',
+            EmailConsumerEnum::DEFAULT_MAX_RETRIES
+        ));
 
         $this->publisher = $publisher;
         $this->worker = $worker;

@@ -13,12 +13,10 @@ class MailjetConnectorTest extends TestCase
      *
      * @return void
      */
-    public function testReturnInstanceType()
+    public function testReturnInstanceType(): void
     {
         $config = config('services.mailjet');
-
         $mailjet = new MailjetConnector($config);
-
         $instanceType = $mailjet->getClient();
 
         $this->assertInstanceOf(Client::class, $instanceType);
