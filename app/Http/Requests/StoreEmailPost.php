@@ -24,16 +24,20 @@ class StoreEmailPost extends FormRequest
      */
     public function rules(): array
     {
+        $defaultEmailRule = 'required|email|max:255';
+        $defaultStringRule = 'required|string|min:1|max:255';
+
         return [
-            'from' => 'required|array',
-            'from.email' => 'required|email|max:255',
-            'from.name' => 'required|string|max:255',
-            'to' => 'required|array',
-            'to.*.email' => 'required|email|max:255',
-            'to.*.name' => 'required|string|max:255',
-            'subject' => 'required|string|max:255',
-            'textPart' => 'required|string',
-            'htmlPart' => 'required|string'
+            'from'          => 'required|array',
+            'from.email'    => $defaultEmailRule,
+            'from.name'     => $defaultStringRule,
+            'to'            => 'required|array',
+            'to.*.email'    => $defaultEmailRule,
+            'to.*.name'     => $defaultStringRule,
+            'subject'       => $defaultStringRule,
+            'textPart'      => 'required_without_all:htmlPart,markdownPart|min:1|string',
+            'htmlPart'      => 'required_without_all:textPart,markdownPart|min:1|string',
+            'markdownPart'  => 'required_without_all:textPart,htmlPart|min:1|string',
         ];
     }
 }
