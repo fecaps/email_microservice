@@ -16,6 +16,11 @@ final class SendgridTransactor extends Transactor
     private $parsedown;
     private $email;
 
+    /**
+     * Config SendGrid Transactor
+     *
+     * @param SendgridConnector  $sendgridConnector
+     */
     public function __construct(SendgridConnector $sendgridConnector)
     {
         $this->client = $sendgridConnector->getClient();
@@ -23,6 +28,12 @@ final class SendgridTransactor extends Transactor
         $this->parsedown = new Parsedown();
     }
 
+    /**
+     * Prepare email payload
+     *
+     * @param array  $inputData
+     * @return void
+     */
     public function preparePayload(array $inputData): void
     {
         try {
@@ -45,7 +56,7 @@ final class SendgridTransactor extends Transactor
             Email::MARKDOWN_PART_KEY    => 'prepareMarkdownPartPayload',
         ];
 
-        if (!array_key_exists($key, $payloadOptions)) {
+        if (! array_key_exists($key, $payloadOptions)) {
             return;
         }
 
@@ -105,6 +116,11 @@ final class SendgridTransactor extends Transactor
         );
     }
 
+    /**
+     * Send email
+     *
+     * @return bool
+     */
     public function send(): bool
     {
         try {
@@ -117,6 +133,11 @@ final class SendgridTransactor extends Transactor
         }
     }
 
+    /**
+     * Send trigger email (next vendor)
+     *
+     * @return bool
+     */
     public function sendTrigger(): bool
     {
         return false;

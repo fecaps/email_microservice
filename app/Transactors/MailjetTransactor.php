@@ -17,6 +17,12 @@ final class MailjetTransactor extends Transactor
     private $messageBody = [];
     private $inputData;
 
+    /**
+     * Config Mailjet Transactor
+     *
+     * @param MailjetConnector  $maijetConnector
+     * @param SendgridTransactor  $sendgridTransactor
+     */
     public function __construct(
         MailjetConnector $maijetConnector,
         SendgridTransactor $sendgridTransactor
@@ -26,6 +32,12 @@ final class MailjetTransactor extends Transactor
         $this->parsedown = new Parsedown();
     }
 
+    /**
+     * Prepare email payload
+     *
+     * @param array  $inputData
+     * @return array
+     */
     public function preparePayload(array $inputData): array
     {
         $this->inputData = $inputData;
@@ -51,17 +63,15 @@ final class MailjetTransactor extends Transactor
             Email::MARKDOWN_PART_KEY    => 'prepareMarkdownPartPayload',
         ];
 
-        if (!array_key_exists($key, $payloadOptions)) {
+        if (! array_key_exists($key, $payloadOptions)) {
             return;
         }
 
         $payloadOption = $payloadOptions[$key];
         $payloadData = $this->{$payloadOption}($value);
 
-        $this->messageBody[MailjetEmail::MESSAGES_KEY_MAILJET][0] = array_merge(
-            $this->messageBody[MailjetEmail::MESSAGES_KEY_MAILJET][0],
-            $payloadData
-        );
+        $this->messageBody[MailjetEmail::MESSAGES_KEY_MAILJET][0] =
+            array_merge($this->messageBody[MailjetEmail::MESSAGES_KEY_MAILJET][0], $payloadData);
     }
 
     private function prepareFromPayload(array $userData): array
@@ -113,24 +123,29 @@ final class MailjetTransactor extends Transactor
         return [ MailjetEmail::HTML_PART_KEY_MAILJET => $markdownValue ];
     }
 
+    /**
+     * Send email
+     *
+     * @return bool
+     */
     public function send(): bool
     {
         try {
             $response = $this->client
                 ->post(Resources::$Email, ['body' => $this->messageBody]);
-
             $status = $response->success();
 
-            if ($status) {
-                return $status;
-            }
-
-            return $this->sendTrigger();
+            return $status ?: $this->sendTrigger();
         } catch (\Exception $exception) {
             return $this->sendTrigger();
         }
     }
 
+    /**
+     * Send trigger email (next vendor)
+     *
+     * @return bool
+     */
     public function sendTrigger(): bool
     {
         $this->sendgridTransactor->preparePayload($this->inputData);
