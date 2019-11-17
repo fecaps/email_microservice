@@ -4,17 +4,30 @@ namespace App\Publishers;
 
 use App\Enum\EmailPublisher as EmailPublisherEnum;
 
-final class EmailPublisher
+final class EmailPublisher implements Publisher
 {
     private $routingKeyName;
     private $exchangeName;
     private $queueName;
 
+    /**
+     * Define object properties based on env variables
+     *
+     */
     public function __construct()
     {
-        $this->routingKeyName = env('RABBITMQ_ROUTING_KEY_NAME', EmailPublisherEnum::DEFAULT_ROUTING_KEY);
-        $this->exchangeName = env('RABBITMQ_EXCHANGE_NAME', EmailPublisherEnum::DEFAULT_EXCHANGE);
-        $this->queueName = env('RABBITMQ_QUEUE', EmailPublisherEnum::DEFAULT_QUEUE);
+        $this->routingKeyName = env(
+            'RABBITMQ_ROUTING_KEY_NAME',
+            EmailPublisherEnum::DEFAULT_ROUTING_KEY
+        );
+        $this->exchangeName = env(
+            'RABBITMQ_EXCHANGE_NAME',
+            EmailPublisherEnum::DEFAULT_EXCHANGE
+        );
+        $this->queueName = env(
+            'RABBITMQ_QUEUE',
+            EmailPublisherEnum::DEFAULT_QUEUE
+        );
     }
 
     /**
@@ -28,7 +41,7 @@ final class EmailPublisher
     {
         $publisherData = [
             'data'      => $emailData,
-            'retries' => $retries
+            'retries'   => $retries,
         ];
 
         \Amqp::publish(
