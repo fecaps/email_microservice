@@ -21,6 +21,20 @@ final class InvalidEmailsDataProvider
                     ],
                     'subject' => $defaultNumberValue,
                     'textPart' => $defaultNumberValue,
+                ]
+            ],
+            [
+
+                [
+                    'from' => [
+                        'email' => 'invalid',
+                        'name' => function () {}
+                    ],
+                    'to' => [
+                        'email' => function () {},
+                        'name' => str_repeat('a', 256)
+                    ],
+                    'subject' => -10,
                     'htmlPart' => $defaultNumberValue,
                 ]
             ],
@@ -29,20 +43,16 @@ final class InvalidEmailsDataProvider
                 [
                     'from' => [
                         'email' => 'invalid',
-                        'name' => function () {
-                        }
+                        'name' => function () {}
                     ],
                     'to' => [
-                        'email' => function () {
-                        },
+                        'email' => function () {},
                         'name' => str_repeat('a', 256)
                     ],
                     'subject' => -10,
-                    'textPart' => new \DateTime(),
-                    'htmlPart' => function () {
-                    }
+                    'markdownPart' => $defaultNumberValue,
                 ]
-            ]
+            ],
         ];
     }
 }
