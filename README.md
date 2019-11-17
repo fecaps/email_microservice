@@ -20,8 +20,16 @@
     1. [Logs](#logs)
     1. [Docker](#docker)
     1. [Scaling Up](#scaling-up)
+    1. [Next Steps](#next-steps)
+1. [API Resources](#api---resources)
 
 ## Setup
+
+Update `storage/logs` folder permissions, this because it's used by docker volumes:
+
+```bash
+$ sudo chmod +x ./storage/logs
+```
 
 ### Clone
 
@@ -274,3 +282,70 @@ the `upstream` config on **Nginx** file (`infrastructure/nginx/default.conf`).
 ```bash
 $ docker-compose -f infrastructure/docker-compose.yml up --scale email=2 --scale email_consumer=3 --build
 ```
+
+### Next Steps
+
+- Create a queue model and save each message queued, bounced and delivered.
+- Create an API resource to retrieve this data (listing)
+- Create a frontend application to list the messages based on endpoint created above
+- Create a form in the frontend in order to also create new emails 
+
+## API - Resources
+
+- Endpoint: `POST http://localhost:8080/emails`
+
+- Payload:
+
+    - Example of text content:
+    ```json
+    {
+        "from": {
+            "email": "fellipecapelli@gmail.com",
+            "name": "fellipe"
+        },
+        "to": [
+            {
+                "email": "fellipe.capelli@outlookl.com",
+                "name": "fellipe"
+            }
+        ],
+        "subject": "hello - test",
+        "textPart": "hello - text test"
+    }
+    ```
+
+    - Example of html content:
+    ```json
+    {
+        "from": {
+            "email": "fellipecapelli@gmail.com",
+            "name": "fellipe"
+        },
+        "to": [
+            {
+                "email": "fellipe.capelli@outlookl.com",
+                "name": "fellipe"
+            }
+        ],
+        "subject": "hello - test",
+        "htmlPart": "hello<br><br>html test"
+    }
+    ```
+
+  - Example of markdown content:
+  ```json
+  {
+      "from": {
+          "email": "fellipecapelli@gmail.com",
+          "name": "fellipe"
+      },
+      "to": [
+          {
+              "email": "fellipe.capelli@outlookl.com",
+              "name": "fellipe"
+          }
+      ],
+      "subject": "hello - test",
+      "markdownPart": "hello, **markdown** test"
+  }
+  ```
