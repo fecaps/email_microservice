@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Transactors;
 
+use Parsedown;
 use Mailjet\Resources;
 use App\Connectors\MailjetConnector;
 use App\Enum\Email;
@@ -12,6 +13,7 @@ final class MailjetTransactor extends Transactor
 {
     private $client;
     private $sendgridTransactor;
+    private $parsedown;
     private $messageBody = [];
     private $inputData;
 
@@ -21,47 +23,54 @@ final class MailjetTransactor extends Transactor
     ) {
         $this->client = $maijetConnector->getClient();
         $this->sendgridTransactor = $sendgridTransactor;
+        $this->parsedown = new Parsedown();
     }
 
     public function preparePayload(array $inputData): array
     {
         $this->inputData = $inputData;
+
         $this->messageBody[MailjetEmail::MESSAGES_KEY_MAILJET] = [];
+        $this->messageBody[MailjetEmail::MESSAGES_KEY_MAILJET][0] = [];
 
         foreach ($inputData as $key => $value) {
-            if ($key === Email::FROM_KEY) {
-                $this->messageBody[MailjetEmail::MESSAGES_KEY_MAILJET][0][MailjetEmail::FROM_KEY_MAILJET] =
-                    $this->prepareFromPayload($value);
-                continue;
-            }
-
-            if ($key === Email::TO_KEY) {
-                $this->messageBody[MailjetEmail::MESSAGES_KEY_MAILJET][0][MailjetEmail::TO_KEY_MAILJET] =
-                    $this->prepareToPayload($value);
-                continue;
-            }
-
-            if ($key === Email::SUBJECT_KEY) {
-                $this->messageBody[MailjetEmail::MESSAGES_KEY_MAILJET][0][MailjetEmail::SUBJECT_KEY_MAILJET] = $value;
-                continue;
-            }
-
-            if ($key === Email::TEXTPART_KEY) {
-                $this->messageBody[MailjetEmail::MESSAGES_KEY_MAILJET][0][MailjetEmail::TEXTPART_KEY_MAILJET] = $value;
-                continue;
-            }
-
-            $this->messageBody[MailjetEmail::MESSAGES_KEY_MAILJET][0][MailjetEmail::HTMLPART_KEY_MAILJET] = $value;
+            $this->defineEmailPayload($key, $value);
         }
 
         return $this->messageBody;
     }
 
+    private function defineEmailPayload(string $key, $value): void
+    {
+        $payloadOptions = [
+            Email::FROM_KEY             => 'prepareFromPayload',
+            Email::TO_KEY               => 'prepareToPayload',
+            Email::SUBJECT_KEY          => 'prepareSubjectPayload',
+            Email::TEXT_PART_KEY        => 'prepareTextPartPayload',
+            Email::HTML_PART_KEY        => 'prepareHtmlPartPayload',
+            Email::MARKDOWN_PART_KEY    => 'prepareMarkdownPartPayload',
+        ];
+
+        if (!array_key_exists($key, $payloadOptions)) {
+            return;
+        }
+
+        $payloadOption = $payloadOptions[$key];
+        $payloadData = $this->{$payloadOption}($value);
+
+        $this->messageBody[MailjetEmail::MESSAGES_KEY_MAILJET][0] = array_merge(
+            $this->messageBody[MailjetEmail::MESSAGES_KEY_MAILJET][0],
+            $payloadData
+        );
+    }
+
     private function prepareFromPayload(array $userData): array
     {
         return [
-            MailjetEmail::EMAIL_KEY_MAILJET  => $userData[Email::EMAIL_KEY],
-            MailjetEmail::NAME_KEY_MAILJET   => $userData[Email::NAME_KEY]
+            MailjetEmail::FROM_KEY_MAILJET => [
+                MailjetEmail::EMAIL_KEY_MAILJET  => $userData[Email::EMAIL_KEY],
+                MailjetEmail::NAME_KEY_MAILJET   => $userData[Email::NAME_KEY],
+            ]
         ];
     }
 
@@ -72,11 +81,36 @@ final class MailjetTransactor extends Transactor
         foreach ($userData as $value) {
             $userPayload[] = [
                 MailjetEmail::EMAIL_KEY_MAILJET  => $value[Email::EMAIL_KEY],
-                MailjetEmail::NAME_KEY_MAILJET   => $value[Email::NAME_KEY]
+                MailjetEmail::NAME_KEY_MAILJET   => $value[Email::NAME_KEY],
             ];
         }
 
-        return $userPayload;
+        return [ MailjetEmail::TO_KEY_MAILJET => $userPayload ];
+    }
+
+    private function prepareSubjectPayload(string $value): array
+    {
+        return [ MailjetEmail::SUBJECT_KEY_MAILJET => $value ];
+    }
+
+    private function prepareTextPartPayload(string $value): array
+    {
+        return [ MailjetEmail::TEXT_PART_KEY_MAILJET => $value ];
+    }
+
+    private function prepareHtmlPartPayload(string $value): array
+    {
+        return [ MailjetEmail::HTML_PART_KEY_MAILJET => $value ];
+    }
+
+    private function prepareMarkdownPartPayload(string $value): array
+    {
+        $this->parsedown->setSafeMode(true);
+        $this->parsedown->setMarkupEscaped(true);
+
+        $markdownValue = $this->parsedown->text($value);
+
+        return [ MailjetEmail::HTML_PART_KEY_MAILJET => $markdownValue ];
     }
 
     public function send(): bool
@@ -91,11 +125,15 @@ final class MailjetTransactor extends Transactor
                 return $status;
             }
 
-            $this->sendgridTransactor->preparePayload($this->inputData);
-            return $this->sendgridTransactor->send();
+            return $this->sendTrigger();
         } catch (\Exception $exception) {
-            $this->sendgridTransactor->preparePayload($this->inputData);
-            return $this->sendgridTransactor->send();
+            return $this->sendTrigger();
         }
+    }
+
+    public function sendTrigger(): bool
+    {
+        $this->sendgridTransactor->preparePayload($this->inputData);
+        return $this->sendgridTransactor->send();
     }
 }
