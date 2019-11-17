@@ -92,7 +92,7 @@ final class SendgridTransactor extends Transactor
         );
     }
 
-    private function prepareMarkdownPartPayload(string $value): array
+    private function prepareMarkdownPartPayload(string $value): void
     {
         $this->parsedown->setSafeMode(true);
         $this->parsedown->setMarkupEscaped(true);
@@ -109,14 +109,16 @@ final class SendgridTransactor extends Transactor
     {
         try {
             $response = $this->client->send($this->email);
-            return ($response->statusCode() === SendgridEmail::SUCCESSFUL_HTTP_CODE);
+            $success = $response->statusCode() === SendgridEmail::SUCCESSFUL_HTTP_CODE;
+
+            return $success ?: $this->sendTrigger();
         } catch (Exception $exception) {
-            return false;
+            return $this->sendTrigger();
         }
     }
 
     public function sendTrigger(): bool
     {
-        return true;
+        return false;
     }
 }

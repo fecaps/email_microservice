@@ -8,7 +8,6 @@ use App\Transactors\SendgridTransactor;
 
 class SendgridTransactorTest extends TestCase
 {
-    private const MESSAGES_PATH =  'Messages';
     private $transactor;
 
     protected function setUp(): void
@@ -26,7 +25,7 @@ class SendgridTransactorTest extends TestCase
      *
      * @return void
      */
-    public function testReturnInstanceType()
+    public function testReturnInstanceType(): void
     {
         $this->assertInstanceOf(SendgridTransactor::class, $this->transactor);
     }
@@ -38,7 +37,8 @@ class SendgridTransactorTest extends TestCase
      * @param array  $email
      * @return void
      */
-    public function testEmailTransactions(array $email) {
+    public function testEmailTransactions(array $email): void
+    {
         $this->transactor->preparePayload($email);
         $send = $this->transactor->send();
 
@@ -52,7 +52,8 @@ class SendgridTransactorTest extends TestCase
      * @param array  $email
      * @return void
      */
-    public function testInvalidEmailTransactions(array $email) {
+    public function testInvalidEmailTransactions(array $email): void
+    {
         $this->transactor->preparePayload($email);
         $send = $this->transactor->send();
 
