@@ -46,8 +46,16 @@ $ cp .env.example .env
 ** These env variables require API keys, versions and secrets related
 to the email vendors used within the application:
 
-- [Mailjet](https://app.mailjet.com)
-- [Sendgrid](https://app.sendgrid.com/)
+- [Mailjet](https://app.mailjet.com):
+
+    - `MAILJET_KEY`
+    - `MAILJET_SECRET`
+
+
+- [Sendgrid](https://app.sendgrid.com/):
+
+    - `SENDGRID_API_KEY`
+
 
 ### Build
 
