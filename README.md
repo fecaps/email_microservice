@@ -69,14 +69,14 @@ The console command responsible for sending emails to the queue:
 
 ```bash
 docker exec -it infrastructure_email_1 php artisan create:email
-``` 
+```
 
 ## Composer Scripts
 
 The project has these `composer` scripts:
 
 *PS.: It requires the containers running*
- 
+
 ```bash
 composer run-script codeStyle
 # code style check
@@ -95,7 +95,7 @@ composer run-script errorsAnalyse
 
 composer run-script fixStyle
 # fix style
-``` 
+```
 
 ### Tests
 
@@ -163,7 +163,7 @@ At the moment the application uses two transactors/vendors for delivering emails
 
 **Attention**
 
-These two vendors responsible for delivering emails have daily and monthly limits. 
+These two vendors responsible for delivering emails have daily and monthly limits.
 
 **Mailjet** has a limit of 200 requests/day.
 
@@ -220,7 +220,7 @@ up, while by using disks some volumes can be added.
 ### Postgres
 
 Despite the usage of RabbitMQ for queueing the messages status are kept in Postgres container,
-this in order to allow actions like retrieving which messages have been delivered, etc. 
+this in order to allow actions like retrieving which messages have been delivered, etc.
 
 ### Laravel - AMQP
 
@@ -251,7 +251,7 @@ Consumer logs:
 - **Docker:** All files related to **Docker** and **docker-compose**
 are set within `infrastructure` folder.
 
-The `email_microservice` and `email_microservice_consmer` resources have **multi-stage** builds.
+The `infrastructure_email_1` and `infrastructure_email_consumer_1` resources have **multi-stage** builds.
 Which are composed of two steps:
 
 - Installing PHP/Composer dependencies
@@ -284,7 +284,7 @@ $ docker-compose -f infrastructure/docker-compose.yml up --scale email=2 --scale
 ### Next Steps
 
 - Create a frontend application to list the messages based on endpoint created above
-- Create a form in the frontend in order to also create new emails 
+- Create a form in the frontend in order to also create new emails
 - Add Swagger for API documentation
 
 ## API - Resources
@@ -298,9 +298,9 @@ Host: `http://localhost:8080`
 - **Create email resource**
 
     - Resource: `POST /emails`
-    
+
     - Input Payload:
-    
+
         - Example of text content:
         ```json
         {
@@ -318,7 +318,7 @@ Host: `http://localhost:8080`
             "textPart": "hello - text test"
         }
         ```
-    
+
         - Example of html content:
         ```json
         {
@@ -336,7 +336,7 @@ Host: `http://localhost:8080`
             "htmlPart": "hello<br><br>html test"
         }
         ```
-    
+
       - Example of markdown content:
       ```json
       {
