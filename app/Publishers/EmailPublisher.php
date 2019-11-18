@@ -3,6 +3,7 @@
 namespace App\Publishers;
 
 use App\Enum\EmailPublisher as EmailPublisherEnum;
+use App\Enum\LogMessages;
 
 final class EmailPublisher implements Publisher
 {
@@ -56,7 +57,7 @@ final class EmailPublisher implements Publisher
         );
 
         $logMessage = sprintf(
-            'Message published to queue. Message: %s - Retries: %s',
+            LogMessages::MESSAGE_PUBLISHED,
             $stringMessage,
             $retries
         );
