@@ -45,15 +45,13 @@
                 "composer run-script codeStyle",
                 "composer run-script copyPasteDetector",
                 "composer run-script messDetector",
-                "composer run-script objectCalisthenics",
-                "composer run-script errorsAnalyse"
+                "composer run-script objectCalisthenics"
             ],
             "pre-push": [
                 "composer run-script codeStyle",
                 "composer run-script copyPasteDetector",
                 "composer run-script messDetector",
                 "composer run-script objectCalisthenics",
-                "composer run-script errorsAnalyse",
                 "composer run-script tests",
                 "composer run-script showCoverage"
             ]

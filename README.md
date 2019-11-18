@@ -16,6 +16,7 @@
     1. [Transactors](#transactors)
     1. [Worker](#worker)
     1. [Queue](#queue)
+    1. [Postgres](#postgres)
     1. [Laravel - AMQP](#laravel---amqp)
     1. [Logs](#logs)
     1. [Docker](#docker)
@@ -24,12 +25,6 @@
 1. [API Resources](#api---resources)
 
 ## Setup
-
-Update `storage/logs` folder permissions, this because it's used by docker volumes:
-
-```bash
-$ sudo chmod +x ./storage/logs
-```
 
 ### Clone
 
@@ -73,7 +68,7 @@ http://localhost:8080
 The console command responsible for sending emails to the queue:
 
 ```bash
-composer run-script php artisan create:email
+docker exec -it infrastructure_email_1 php artisan create:email
 ``` 
 
 ## Composer Scripts
@@ -159,6 +154,7 @@ The project is composed of 4 resources:
   - `infrastructure_email_consumer` (the queue consumer - **stateless**)
   - `email_rabbitmq` (the queue consumer - **stateful**)
   - `email_nginx` (the queue consumer - **stateless**)
+  - `infrastructure_postgres_1` (the queue messages status - **stateful**)
 
 ### Transactors
 
@@ -224,6 +220,11 @@ all messages to be lost. While an in-memory queueing doesn't prevent this, plus 
 a cluster (for instance, through Kubernetes) more memory would be required when scaling
 up, while by using disks some volumes can be added.
 
+### Postgres
+
+Despite the usage of RabbitMQ for queueing the messages status are kept in Postgres container,
+this in order to allow actions like retrieving which messages have been delivered, etc. 
+
 ### Laravel - AMQP
 
 - Package used to deal with AMQP in Laravel: https://github.com/bschmitt/laravel-amqp
@@ -285,67 +286,74 @@ $ docker-compose -f infrastructure/docker-compose.yml up --scale email=2 --scale
 
 ### Next Steps
 
-- Create a queue model and save each message queued, bounced and delivered.
-- Create an API resource to retrieve this data (listing)
 - Create a frontend application to list the messages based on endpoint created above
 - Create a form in the frontend in order to also create new emails 
+- Add Swagger for API documentation
 
 ## API - Resources
 
-- Endpoint: `POST http://localhost:8080/emails`
+Host: `http://localhost:8080`
 
-- Payload:
+- **Get all email transactions**
 
-    - Example of text content:
-    ```json
-    {
-        "from": {
-            "email": "fellipecapelli@gmail.com",
-            "name": "fellipe"
-        },
-        "to": [
-            {
-                "email": "fellipe.capelli@outlookl.com",
+    - Resource: `GET /emails`
+
+- **Create email resource**
+
+    - Resource: `POST /emails`
+    
+    - Input Payload:
+    
+        - Example of text content:
+        ```json
+        {
+            "from": {
+                "email": "fellipecapelli@gmail.com",
                 "name": "fellipe"
-            }
-        ],
-        "subject": "hello - test",
-        "textPart": "hello - text test"
-    }
-    ```
-
-    - Example of html content:
-    ```json
-    {
-        "from": {
-            "email": "fellipecapelli@gmail.com",
-            "name": "fellipe"
-        },
-        "to": [
-            {
-                "email": "fellipe.capelli@outlookl.com",
+            },
+            "to": [
+                {
+                    "email": "fellipe.capelli@outlookl.com",
+                    "name": "fellipe"
+                }
+            ],
+            "subject": "hello - test",
+            "textPart": "hello - text test"
+        }
+        ```
+    
+        - Example of html content:
+        ```json
+        {
+            "from": {
+                "email": "fellipecapelli@gmail.com",
                 "name": "fellipe"
-            }
-        ],
-        "subject": "hello - test",
-        "htmlPart": "hello<br><br>html test"
-    }
-    ```
-
-  - Example of markdown content:
-  ```json
-  {
-      "from": {
-          "email": "fellipecapelli@gmail.com",
-          "name": "fellipe"
-      },
-      "to": [
-          {
-              "email": "fellipe.capelli@outlookl.com",
+            },
+            "to": [
+                {
+                    "email": "fellipe.capelli@outlookl.com",
+                    "name": "fellipe"
+                }
+            ],
+            "subject": "hello - test",
+            "htmlPart": "hello<br><br>html test"
+        }
+        ```
+    
+      - Example of markdown content:
+      ```json
+      {
+          "from": {
+              "email": "fellipecapelli@gmail.com",
               "name": "fellipe"
-          }
-      ],
-      "subject": "hello - test",
-      "markdownPart": "hello, **markdown** test"
-  }
-  ```
+          },
+          "to": [
+              {
+                  "email": "fellipe.capelli@outlookl.com",
+                  "name": "fellipe"
+              }
+          ],
+          "subject": "hello - test",
+          "markdownPart": "hello, **markdown** test"
+      }
+      ```

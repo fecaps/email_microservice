@@ -1,6 +1,6 @@
 <?php
 
-use Illuminate\Http\Request;
+use App\Queue;
 
 /*
 |--------------------------------------------------------------------------
@@ -12,6 +12,10 @@ use Illuminate\Http\Request;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
+
+Route::get('/emails', function () {
+    return Queue::all();
+})->name('emails.list');
 
 Route::post('/emails', 'EmailController@store')->name('emails.store');
 
