@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Transactors;
 
+use App\Enum\LogMessages;
 use Parsedown;
 use Mailjet\Resources;
 use App\Connectors\MailjetConnector;
@@ -137,6 +138,12 @@ final class MailjetTransactor extends Transactor
 
             return $status ?: $this->sendTrigger();
         } catch (\Exception $exception) {
+            $message = sprintf(
+                LogMessages::MAILJET_SEND_ERROR,
+                $exception->getMessage()
+            );
+            \Log::channel('consumer')->info($message);
+
             return $this->sendTrigger();
         }
     }

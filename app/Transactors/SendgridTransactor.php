@@ -9,6 +9,7 @@ use Parsedown;
 use App\Connectors\SendgridConnector;
 use App\Enum\Email;
 use App\Enum\SendgridEmail;
+use App\Enum\LogMessages;
 
 final class SendgridTransactor extends Transactor
 {
@@ -41,7 +42,11 @@ final class SendgridTransactor extends Transactor
                 $this->defineEmailPayload($key, $value);
             }
         } catch (Exception $exception) {
-            echo $exception->getMessage();
+            $message = sprintf(
+                LogMessages::SENDGRID_PAYLOAD_ERROR,
+                $exception->getMessage()
+            );
+            \Log::channel('consumer')->info($message);
         }
     }
 
@@ -129,6 +134,12 @@ final class SendgridTransactor extends Transactor
 
             return $success ?: $this->sendTrigger();
         } catch (Exception $exception) {
+            $message = sprintf(
+                LogMessages::SENDGRID_SEND_ERROR,
+                $exception->getMessage()
+            );
+            \Log::channel('consumer')->info($message);
+
             return $this->sendTrigger();
         }
     }
