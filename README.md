@@ -133,15 +133,12 @@ and **testing scripts**.
     - `copyPasteDetector`
     - `messDetector`
     - `objectCalisthenics`
-    - `errorsAnalyse`
-
 
 - `pre-push`:
     - `codeStyle`
     - `copyPasteDetector`
     - `messDetector`
     - `objectCalisthenics`
-    - `errorsAnalyse`
     - `tests`
     - `showCoverage`
 
