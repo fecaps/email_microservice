@@ -86,8 +86,8 @@ class EmailCreationTest extends TestCase
             ->expectsQuestion(EmailCreation::TO_EMAIL_MESSAGE, 'fellipe.capelli@outlook.com')
             ->expectsQuestion(EmailCreation::TO_NAME_MESSAGE, 'Fellipe Capelli')
             ->expectsQuestion(EmailCreation::SUBJECT_MESSAGE, 'hello - subject')
-            ->expectsQuestion(EmailCreation::HTML_PART_MESSAGE, '')
             ->expectsQuestion(EmailCreation::TEXT_PART_MESSAGE, '')
+            ->expectsQuestion(EmailCreation::HTML_PART_MESSAGE, '')
             ->expectsQuestion(EmailCreation::MARKDOWN_PART_MESSAGE, 'Hello, markdown part')
             ->expectsOutput(EmailCreation::END_MESSAGE);
     }

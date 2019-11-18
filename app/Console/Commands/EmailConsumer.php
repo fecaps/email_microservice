@@ -83,7 +83,9 @@ final class EmailConsumer extends Command
     {
         $arrayData = $this->defineArrayData($message);
 
-        $this->queue->updateStatusToBounced($arrayData['data']['id']);
+        if ($this->arrayHasId($arrayData)) {
+            $this->queue->updateStatusToBounced($arrayData['data']['id']);
+        }
 
         try {
             $data = $arrayData[EmailConsumerEnum::DATA_KEY];
@@ -111,7 +113,9 @@ final class EmailConsumer extends Command
         );
         \Log::consumer('consumer')->info($logMessage);
 
-        $this->queue->updateStatusToFailed($arrayData['data']['id']);
+        if ($this->arrayHasId($arrayData)) {
+            $this->queue->updateStatusToFailed($arrayData['data']['id']);
+        }
     }
 
     private function logConsumerError(\Exception $exception): void
@@ -142,7 +146,10 @@ final class EmailConsumer extends Command
         );
         \Log::channel('consumer')->info($logMessage);
 
-        $this->queue->updateStatusToDelivered($arrayData['data']['id']);
+        if ($this->arrayHasId($arrayData)) {
+            $this->queue->updateStatusToDelivered($arrayData['data']['id']);
+        }
+
         $this->info(EmailConsumerEnum::CONSUMER_ACK);
     }
 
@@ -177,5 +184,10 @@ final class EmailConsumer extends Command
     {
         $body = (array)($message->body);
         return json_decode($body[0], true);
+    }
+
+    private function arrayHasId(array $arrayData): bool
+    {
+        return $arrayData['data'] && array_key_exists('id', $arrayData['data']);
     }
 }
