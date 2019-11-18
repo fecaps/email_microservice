@@ -3,13 +3,17 @@
 namespace App\Console\Commands;
 
 use App\Enum\EmailCreation as EmailCreationEnum;
+use App\Enum\LogMessages;
 use App\Publishers\EmailPublisher;
+use App\Queue;
 use Illuminate\Console\Command;
 use Illuminate\Contracts\Validation\Validator as ValidationValidator;
 use Illuminate\Support\Facades\Validator;
 
 final class EmailCreation extends Command
 {
+    private $queue;
+
     /**
      * The name and signature of the console command.
      *
@@ -38,10 +42,12 @@ final class EmailCreation extends Command
      * Execute the console command.
      *
      * @param EmailPublisher  $publisher
+     * @param Queue  $queue
      * @return string
      */
-    public function handle(EmailPublisher $publisher): string
+    public function handle(EmailPublisher $publisher, Queue $queue): string
     {
+        $this->queue = $queue;
         $this->info(EmailCreationEnum::START_MESSAGE);
 
         $fromEmail = $this->ask(EmailCreationEnum::FROM_EMAIL_MESSAGE);
@@ -77,7 +83,7 @@ final class EmailCreation extends Command
             return $this->showErrors($validator);
         }
 
-        \Log::channel('publisher')->info('New message requested - Console');
+        \Log::channel('publisher')->info(LogMessages::START_CONSOLE);
         return $this->createEmail($emailData, $publisher);
     }
 
@@ -128,7 +134,10 @@ final class EmailCreation extends Command
     {
         $data = $this->prepareEmailPayload($emailData);
 
-        $publisher->handle($data);
+        $id = $this->queue->addToQueue($data);
+        $fullData = array_merge($data, [ 'id' => $id ]);
+
+        $publisher->handle($fullData);
 
         $this->info(EmailCreationEnum::END_MESSAGE);
         return EmailCreationEnum::END_MESSAGE;
