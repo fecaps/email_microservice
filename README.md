@@ -31,7 +31,7 @@
 Clone the project and enter on its folder:
 
 ```bash
-$ git clone git@gitlab.com:fecaps/email_microservice.git && \
+$ git clone git@gihub.com:fecaps/email_microservice.git && \
 cd email_microservice
 ```
 
