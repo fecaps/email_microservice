@@ -262,10 +262,10 @@ are set within `infrastructure` folder.
 The `infrastructure_email_1` and `infrastructure_email_consumer_1` resources have **multi-stage** builds.
 Which are composed of two steps:
 
-- Installing PHP/Composer dependencies
-- Installing PHP extensions and configuring web/app server
+- Composer
+- Installing PHP extensions, Composer dependencies and configuring web/app server
 
-There are two `Dockerfiles` for , one is used for
+There are two `Dockerfiles`, one is used for
 `development` and another for `production`.
 
 The one used for `development` contains `XDebug` and **dev dependencies**.
