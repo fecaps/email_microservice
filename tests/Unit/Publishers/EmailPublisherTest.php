@@ -3,18 +3,12 @@
 namespace Tests\Unit\Publishers;
 
 use Tests\TestCase;
+use Tests\Unit\EmailDataCreator;
 use App\Publishers\EmailPublisher;
 
 class EmailPublisherTest extends TestCase
 {
-    private $publisher;
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        $this->publisher = new EmailPublisher();
-    }
+    use EmailDataCreator;
 
     /**
      * Email Publisher test
@@ -24,7 +18,12 @@ class EmailPublisherTest extends TestCase
      * @return void
      */
     public function testEmailTransactions(array $email): void {
-        $this->publisher->handle($email);
-        $this->assertInstanceOf(EmailPublisher::class, $this->publisher);
+        $emailDTO = $this->setEmailData($email);
+
+        $testName = 'test';
+        $publisher = new EmailPublisher($testName, $testName, $testName);
+        $publisher->handle($emailDTO);
+
+        $this->assertInstanceOf(EmailPublisher::class, $publisher);
     }
 }
