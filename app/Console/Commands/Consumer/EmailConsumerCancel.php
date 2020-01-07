@@ -28,6 +28,6 @@ trait EmailConsumerCancel
             json_encode($emailDTO->get())
         );
 
-        \Log::consumer('consumer')->info($logMessage);
+        \Log::channel('consumer')->info($logMessage);
     }
 }

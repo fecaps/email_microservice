@@ -46,6 +46,10 @@ class EmailDTO implements Email
             return;
         }
 
+        if (sizeof($from) === 0) {
+            return;
+        }
+
         $this->from = $from;
     }
 
@@ -59,7 +63,15 @@ class EmailDTO implements Email
             return;
         }
 
-        $this->to = array_merge($this->to, $to);
+        if (sizeof($to) === 0) {
+            return;
+        }
+
+        if (!is_array($to[0])) {
+            return;
+        }
+
+        $this->to = $to;
     }
 
     /**
