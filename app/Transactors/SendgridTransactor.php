@@ -4,64 +4,82 @@ declare(strict_types=1);
 namespace App\Transactors;
 
 use Exception;
-use SendGrid\Mail\Mail;
 use Parsedown;
-use App\Connectors\SendgridConnector;
-use App\Enum\Email;
-use App\Enum\SendgridEmail;
+use SendGrid\Mail\Mail;
+use App\DTO\Email;
+use App\Enum\Email as EmailEnum;
 use App\Enum\LogMessages;
+use App\Enum\SendgridEmail;
+use App\Connectors\SendgridConnector;
 
-final class SendgridTransactor extends Transactor
+final class SendgridTransactor implements MailerTransactor
 {
+    use LogError;
+
     private $client;
     private $parsedown;
     private $email;
+    private $emailDTO;
 
     /**
      * Config SendGrid Transactor
      *
-     * @param SendgridConnector  $sendgridConnector
+     * @param SendgridConnector  $connector
      */
-    public function __construct(SendgridConnector $sendgridConnector)
+    public function __construct(SendgridConnector $connector)
     {
-        $this->client = $sendgridConnector->getClient();
+        $this->client = $connector->getClient();
         $this->email = new Mail();
         $this->parsedown = new Parsedown();
     }
 
     /**
-     * Prepare email payload
+     * Send email
      *
-     * @param array  $inputData
-     * @return void
+     * @param Email  $email
+     * @return bool
      */
-    public function preparePayload(array $inputData): void
+    public function send(Email $email): bool
+    {
+        try {
+            $inputData = $email->get();
+            $this->preparePayload($inputData);
+            $response = $this->client->send($this->email);
+
+            return $response->statusCode() === SendgridEmail::SUCCESSFUL_HTTP_CODE;
+        } catch (Exception $exception) {
+            $this->logError(LogMessages::SENDGRID_SEND_ERROR, $exception->getMessage());
+
+            return false;
+        }
+    }
+
+    private function preparePayload(array $inputData): void
     {
         try {
             foreach ($inputData as $key => $value) {
                 $this->defineEmailPayload($key, $value);
             }
         } catch (Exception $exception) {
-            $message = sprintf(
+            $this->logError(
                 LogMessages::SENDGRID_PAYLOAD_ERROR,
                 $exception->getMessage()
             );
-            \Log::channel('consumer')->info($message);
         }
     }
 
     private function defineEmailPayload(string $key, $value): void
     {
         $payloadOptions = [
-            Email::FROM_KEY             => 'prepareFromPayload',
-            Email::TO_KEY               => 'prepareToPayload',
-            Email::SUBJECT_KEY          => 'prepareSubjectPayload',
-            Email::TEXT_PART_KEY        => 'prepareTextPartPayload',
-            Email::HTML_PART_KEY        => 'prepareHtmlPartPayload',
-            Email::MARKDOWN_PART_KEY    => 'prepareMarkdownPartPayload',
+            EmailEnum::FROM_KEY             => 'prepareFromPayload',
+            EmailEnum::TO_KEY               => 'prepareToPayload',
+            EmailEnum::SUBJECT_KEY          => 'prepareSubjectPayload',
+            EmailEnum::TEXT_PART_KEY        => 'prepareTextPartPayload',
+            EmailEnum::HTML_PART_KEY        => 'prepareHtmlPartPayload',
+            EmailEnum::MARKDOWN_PART_KEY    => 'prepareMarkdownPartPayload',
         ];
 
-        if (! array_key_exists($key, $payloadOptions)) {
+        if (!array_key_exists($key, $payloadOptions)) {
             return;
         }
 
@@ -72,8 +90,8 @@ final class SendgridTransactor extends Transactor
     private function prepareFromPayload(array $userData): void
     {
         $this->email->setFrom(
-            $userData[Email::EMAIL_KEY],
-            $userData[Email::NAME_KEY]
+            $userData[EmailEnum::EMAIL_KEY],
+            $userData[EmailEnum::NAME_KEY]
         );
     }
 
@@ -81,8 +99,8 @@ final class SendgridTransactor extends Transactor
     {
         foreach ($userData as $value) {
             $this->email->addTo(
-                $value[Email::EMAIL_KEY],
-                $value[Email::NAME_KEY]
+                $value[EmailEnum::EMAIL_KEY],
+                $value[EmailEnum::NAME_KEY]
             );
         }
     }
@@ -119,38 +137,5 @@ final class SendgridTransactor extends Transactor
             'text/html',
             $markdownValue
         );
-    }
-
-    /**
-     * Send email
-     *
-     * @return bool
-     */
-    public function send(): bool
-    {
-        try {
-            $response = $this->client->send($this->email);
-            $success = $response->statusCode() === SendgridEmail::SUCCESSFUL_HTTP_CODE;
-
-            return $success ?: $this->sendTrigger();
-        } catch (Exception $exception) {
-            $message = sprintf(
-                LogMessages::SENDGRID_SEND_ERROR,
-                $exception->getMessage()
-            );
-            \Log::channel('consumer')->info($message);
-
-            return $this->sendTrigger();
-        }
-    }
-
-    /**
-     * Send trigger email (next vendor)
-     *
-     * @return bool
-     */
-    public function sendTrigger(): bool
-    {
-        return false;
     }
 }
