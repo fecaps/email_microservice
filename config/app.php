@@ -177,6 +177,8 @@ return [
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
         App\Providers\EmailServiceProvider::class,
+        App\Providers\EmailConsumerServiceProvider::class,
+        App\Providers\EmailPublisherServiceProvider::class,
         AmqpServiceProvider::class,
 
     ],

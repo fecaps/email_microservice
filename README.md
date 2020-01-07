@@ -163,8 +163,8 @@ The project is composed of 4 resources:
 
 ### Transactors
 
-At the moment the application uses two transactors/vendors for delivering emails
-(in this order):
+An implementation of `MailerTransactor`. At the moment the application uses two
+transactors/vendors for delivering emails (in this order):
 
 - **Mailjet**
 - **Sendgrid**
@@ -183,9 +183,10 @@ on it (which are used by the tests).
 
 ### Worker
 
-The email worker implements the Chain of Responsibility pattern
-when attempting to deliver emails. It tries to send an email through a given vendor,
-if it doesn't work then it tries with the next one and so on.
+The email worker has an array of `MailerTransactors` and it tries to send an email
+through each one, in case of one failing then it goes to the next,
+in case of success it finishes the worker with a boolean `true`, making it clear
+the email was sent. If none vendor worked, then the worker finishes with a `false`.
 
 In case of being needed to add a new vendor then these are the steps required:
 
@@ -194,12 +195,9 @@ In case of being needed to add a new vendor then these are the steps required:
 - Create a connector class for the new vendor service
   - Example: the `Mailjet` connector creates an instance of a `Mailjet Client` (third-party vendor).
 - Create a **singleton** instance for the new connector created (in `EmailServiceProvider`).
-- Create a transactor class for the new vendor service. This transactor will be responsible
-for preparing the payload, sending the email and calling the trigger
-(to call the next transactor in case of failure).
-- Update the last transactor already created by injecting the new transactor as a dependency.
-- Update the last transactor `sendTrigger` method to call the new transactor
-(just like it's done in `MailjetTransactor` class, in `sendTrigger` method).
+- Create a transactor class for the new vendor service. This transactor will be responsible for
+sending the email only. This transactor must implements `MailerTransactor` interface.
+- Add the new transactor to the `AppServiceProvider`, as a dependency in the `EmailWorker` bind.
 
 ### Queue
 
@@ -294,6 +292,8 @@ $ docker-compose -f infrastructure/docker-compose.yml up --scale email=2 --scale
 - Create a frontend application to list the messages based on endpoint created above
 - Create a form in the frontend in order to also create new emails
 - Add Swagger for API documentation
+- Add a repository for the `Queue` entity
+- Add Kubernetes to the stateful and stateless resources
 
 ## API - Resources
 

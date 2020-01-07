@@ -23,7 +23,7 @@
         <whitelist processUncoveredFilesFromWhitelist="true">
             <directory suffix=".php">./app</directory>
             <exclude>
-                <file>./app/Console/Commands/EmailConsumer.php</file>
+                <directory suffix=".php">./app/Console/Commands/Consumer</directory>
                 <directory suffix=".php">./app/Http/Controllers/Auth</directory>
                 <directory suffix=".php">./app/Http/Middleware</directory>
             </exclude>
