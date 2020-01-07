@@ -3,8 +3,8 @@
 namespace Tests\Unit\Connectors;
 
 use Tests\TestCase;
-use App\Connectors\MailjetConnector;
 use Mailjet\Client;
+use App\Connectors\MailjetConnector;
 
 class MailjetConnectorTest extends TestCase
 {
