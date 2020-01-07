@@ -8,9 +8,12 @@ use App\Transactors\SendgridTransactor;
 use App\Workers\EmailWorker;
 use App\Connectors\MailjetConnector;
 use App\Transactors\MailjetTransactor;
+use Tests\Unit\EmailDataCreator;
 
 class EmailWorkerTest extends TestCase
 {
+    use EmailDataCreator;
+
     private $worker;
 
     protected function setUp(): void
@@ -19,14 +22,13 @@ class EmailWorkerTest extends TestCase
 
         $mailjetConfig = config('services.mailjet');
         $mailjetConnector = new MailjetConnector($mailjetConfig);
+        $mailjetTransactor = new MailjetTransactor($mailjetConnector);
 
         $sendgridConfig = config('services.sendgrid');
         $sendgridConnector = new SendgridConnector($sendgridConfig);
         $sendgridTransactor = new SendgridTransactor($sendgridConnector);
 
-        $transactor = new MailjetTransactor($mailjetConnector, $sendgridTransactor);
-
-        $this->worker = new EmailWorker($transactor);
+        $this->worker = new EmailWorker([$mailjetTransactor, $sendgridTransactor]);
     }
 
     /**
@@ -48,7 +50,9 @@ class EmailWorkerTest extends TestCase
      */
     public function testEmailTransactions(array $email): void
     {
-        $send = $this->worker->sendEmail($email);
+        $emailDTO = $this->setEmailData($email);
+        $send = $this->worker->sendEmail($emailDTO);
+
         $this->assertTrue($send);
     }
 
@@ -61,7 +65,9 @@ class EmailWorkerTest extends TestCase
      */
     public function testInvalidEmailTransactions(array $email): void
     {
-        $send = $this->worker->sendEmail($email);
+        $emailDTO = $this->setEmailData($email);
+        $send = $this->worker->sendEmail($emailDTO);
+
         $this->assertFalse($send);
     }
 }
