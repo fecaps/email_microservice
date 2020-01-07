@@ -2,9 +2,9 @@
 
 namespace App\Providers;
 
+use Illuminate\Support\ServiceProvider;
 use App\Connectors\MailjetConnector;
 use App\Connectors\SendgridConnector;
-use Illuminate\Support\ServiceProvider;
 
 class EmailServiceProvider extends ServiceProvider
 {
@@ -17,7 +17,6 @@ class EmailServiceProvider extends ServiceProvider
     {
         $this->app->singleton(MailjetConnector::class, function ($app) {
             $config = $app->make('config');
-
             $maijetConfig = $config->get('services.mailjet', []);
 
             return new MailjetConnector($maijetConfig);
@@ -25,7 +24,6 @@ class EmailServiceProvider extends ServiceProvider
 
         $this->app->singleton(SendgridConnector::class, function ($app) {
             $config = $app->make('config');
-
             $sendgridConfig = $config->get('services.sendgrid', []);
 
             return new SendgridConnector($sendgridConfig);
