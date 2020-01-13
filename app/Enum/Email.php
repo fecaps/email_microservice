@@ -5,6 +5,7 @@ namespace App\Enum;
 
 final class Email
 {
+    public const ID_KEY             = 'id';
     public const FROM_KEY           = 'from';
     public const TO_KEY             = 'to';
     public const EMAIL_KEY          = 'email';

@@ -2,8 +2,9 @@
 
 namespace App\Publishers;
 
-use App\Enum\EmailPublisher as EmailPublisherEnum;
+use App\DTO\Email;
 use App\Enum\LogMessages;
+use App\Enum\EmailPublisher as EmailPublisherEnum;
 
 final class EmailPublisher implements Publisher
 {
@@ -14,35 +15,29 @@ final class EmailPublisher implements Publisher
     /**
      * Define object properties based on env variables
      *
+     * @param string  $routingKeyName
+     * @param string  $exchangeName
+     * @param string  $queueName
      */
-    public function __construct()
+    public function __construct(string $routingKeyName, string $exchangeName, string $queueName)
     {
-        $this->routingKeyName = env(
-            'RABBITMQ_ROUTING_KEY_NAME',
-            EmailPublisherEnum::DEFAULT_ROUTING_KEY
-        );
-        $this->exchangeName = env(
-            'RABBITMQ_EXCHANGE_NAME',
-            EmailPublisherEnum::DEFAULT_EXCHANGE
-        );
-        $this->queueName = env(
-            'RABBITMQ_QUEUE',
-            EmailPublisherEnum::DEFAULT_QUEUE
-        );
+        $this->routingKeyName = $routingKeyName;
+        $this->exchangeName = $exchangeName;
+        $this->queueName = $queueName;
     }
 
     /**
      * Execute the job.
      *
-     * @param array  $emailData
-     * @param int  $retries
+     * @param Email $emailDTO
+     * @param int $retries
      * @return void
      */
-    public function handle(array $emailData, int $retries = EmailPublisherEnum::DEFAULT_RETRY): void
+    public function handle(Email $emailDTO, int $retries = EmailPublisherEnum::DEFAULT_RETRY): void
     {
         $publisherData = [
-            'data'      => $emailData,
-            'retries'   => $retries,
+            'data' => $emailDTO->get(),
+            'retries' => $retries,
         ];
 
         $stringMessage = json_encode($publisherData);
@@ -51,11 +46,16 @@ final class EmailPublisher implements Publisher
             $this->routingKeyName,
             $stringMessage,
             [
-                'queue'     => $this->queueName,
-                'exchange'  => $this->exchangeName
+                'queue' => $this->queueName,
+                'exchange' => $this->exchangeName
             ]
         );
 
+        $this->logPublish($stringMessage, $retries);
+    }
+
+    private function logPublish(string $stringMessage, int $retries): void
+    {
         $logMessage = sprintf(
             LogMessages::MESSAGE_PUBLISHED,
             $stringMessage,

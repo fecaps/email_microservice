@@ -3,11 +3,14 @@
 namespace Tests\Unit\Transactors;
 
 use Tests\TestCase;
+use Tests\Unit\EmailDataCreator;
 use App\Connectors\SendgridConnector;
 use App\Transactors\SendgridTransactor;
 
 class SendgridTransactorTest extends TestCase
 {
+    use EmailDataCreator;
+
     private $transactor;
 
     protected function setUp(): void
@@ -16,7 +19,6 @@ class SendgridTransactorTest extends TestCase
 
         $config = config('services.sendgrid');
         $connector = new SendgridConnector($config);
-
         $this->transactor = new SendgridTransactor($connector);
     }
 
@@ -39,8 +41,8 @@ class SendgridTransactorTest extends TestCase
      */
     public function testEmailTransactions(array $email): void
     {
-        $this->transactor->preparePayload($email);
-        $send = $this->transactor->send();
+        $emailDTO = $this->setEmailData($email);
+        $send = $this->transactor->send($emailDTO);
 
         $this->assertTrue($send);
     }
@@ -54,8 +56,8 @@ class SendgridTransactorTest extends TestCase
      */
     public function testInvalidEmailTransactions(array $email): void
     {
-        $this->transactor->preparePayload($email);
-        $send = $this->transactor->send();
+        $emailDTO = $this->setEmailData($email);
+        $send = $this->transactor->send($emailDTO);
 
         $this->assertFalse($send);
     }

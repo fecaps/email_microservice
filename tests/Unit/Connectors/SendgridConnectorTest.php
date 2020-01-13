@@ -2,9 +2,9 @@
 
 namespace Tests\Unit\Connectors;
 
-use App\Connectors\SendgridConnector;
 use Tests\TestCase;
 use SendGrid;
+use App\Connectors\SendgridConnector;
 
 class SendgridConnectorTest extends TestCase
 {

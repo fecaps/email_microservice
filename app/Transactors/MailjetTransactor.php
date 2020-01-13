@@ -3,46 +3,57 @@ declare(strict_types=1);
 
 namespace App\Transactors;
 
-use App\Enum\LogMessages;
 use Parsedown;
 use Mailjet\Resources;
-use App\Connectors\MailjetConnector;
-use App\Enum\Email;
+use App\DTO\Email;
+use App\Enum\Email as EmailEnum;
+use App\Enum\LogMessages;
 use App\Enum\MailjetEmail;
+use App\Connectors\MailjetConnector;
 
-final class MailjetTransactor extends Transactor
+final class MailjetTransactor implements MailerTransactor
 {
+    use LogError;
+
     private $client;
-    private $sendgridTransactor;
     private $parsedown;
     private $messageBody = [];
-    private $inputData;
+    private $emailDTO;
 
     /**
      * Config Mailjet Transactor
      *
-     * @param MailjetConnector  $maijetConnector
-     * @param SendgridTransactor  $sendgridTransactor
+     * @param MailjetConnector  $connector
      */
-    public function __construct(
-        MailjetConnector $maijetConnector,
-        SendgridTransactor $sendgridTransactor
-    ) {
-        $this->client = $maijetConnector->getClient();
-        $this->sendgridTransactor = $sendgridTransactor;
+    public function __construct(MailjetConnector $connector)
+    {
+        $this->client = $connector->getClient();
         $this->parsedown = new Parsedown();
     }
 
     /**
-     * Prepare email payload
+     * Send email
      *
-     * @param array  $inputData
-     * @return array
+     * @param Email  $email
+     * @return bool
      */
-    public function preparePayload(array $inputData): array
+    public function send(Email $email): bool
     {
-        $this->inputData = $inputData;
+        try {
+            $inputData = $email->get();
+            $this->preparePayload($inputData);
+            $response = $this->client->post(Resources::$Email, ['body' => $this->messageBody]);
 
+            return $response->success();
+        } catch (\Exception $exception) {
+            $this->logError(LogMessages::MAILJET_SEND_ERROR, $exception->getMessage());
+
+            return false;
+        }
+    }
+
+    private function preparePayload(array $inputData): array
+    {
         $this->messageBody[MailjetEmail::MESSAGES_KEY_MAILJET] = [];
         $this->messageBody[MailjetEmail::MESSAGES_KEY_MAILJET][0] = [];
 
@@ -56,15 +67,15 @@ final class MailjetTransactor extends Transactor
     private function defineEmailPayload(string $key, $value): void
     {
         $payloadOptions = [
-            Email::FROM_KEY             => 'prepareFromPayload',
-            Email::TO_KEY               => 'prepareToPayload',
-            Email::SUBJECT_KEY          => 'prepareSubjectPayload',
-            Email::TEXT_PART_KEY        => 'prepareTextPartPayload',
-            Email::HTML_PART_KEY        => 'prepareHtmlPartPayload',
-            Email::MARKDOWN_PART_KEY    => 'prepareMarkdownPartPayload',
+            EmailEnum::FROM_KEY             => 'prepareFromPayload',
+            EmailEnum::TO_KEY               => 'prepareToPayload',
+            EmailEnum::SUBJECT_KEY          => 'prepareSubjectPayload',
+            EmailEnum::TEXT_PART_KEY        => 'prepareTextPartPayload',
+            EmailEnum::HTML_PART_KEY        => 'prepareHtmlPartPayload',
+            EmailEnum::MARKDOWN_PART_KEY    => 'prepareMarkdownPartPayload',
         ];
 
-        if (! array_key_exists($key, $payloadOptions)) {
+        if (!array_key_exists($key, $payloadOptions)) {
             return;
         }
 
@@ -79,8 +90,8 @@ final class MailjetTransactor extends Transactor
     {
         return [
             MailjetEmail::FROM_KEY_MAILJET => [
-                MailjetEmail::EMAIL_KEY_MAILJET  => $userData[Email::EMAIL_KEY],
-                MailjetEmail::NAME_KEY_MAILJET   => $userData[Email::NAME_KEY],
+                MailjetEmail::EMAIL_KEY_MAILJET  => $userData[EmailEnum::EMAIL_KEY],
+                MailjetEmail::NAME_KEY_MAILJET   => $userData[EmailEnum::NAME_KEY],
             ]
         ];
     }
@@ -91,8 +102,8 @@ final class MailjetTransactor extends Transactor
 
         foreach ($userData as $value) {
             $userPayload[] = [
-                MailjetEmail::EMAIL_KEY_MAILJET  => $value[Email::EMAIL_KEY],
-                MailjetEmail::NAME_KEY_MAILJET   => $value[Email::NAME_KEY],
+                MailjetEmail::EMAIL_KEY_MAILJET  => $value[EmailEnum::EMAIL_KEY],
+                MailjetEmail::NAME_KEY_MAILJET   => $value[EmailEnum::NAME_KEY],
             ];
         }
 
@@ -122,40 +133,5 @@ final class MailjetTransactor extends Transactor
         $markdownValue = $this->parsedown->text($value);
 
         return [ MailjetEmail::HTML_PART_KEY_MAILJET => $markdownValue ];
-    }
-
-    /**
-     * Send email
-     *
-     * @return bool
-     */
-    public function send(): bool
-    {
-        try {
-            $response = $this->client
-                ->post(Resources::$Email, ['body' => $this->messageBody]);
-            $status = $response->success();
-
-            return $status ?: $this->sendTrigger();
-        } catch (\Exception $exception) {
-            $message = sprintf(
-                LogMessages::MAILJET_SEND_ERROR,
-                $exception->getMessage()
-            );
-            \Log::channel('consumer')->info($message);
-
-            return $this->sendTrigger();
-        }
-    }
-
-    /**
-     * Send trigger email (next vendor)
-     *
-     * @return bool
-     */
-    public function sendTrigger(): bool
-    {
-        $this->sendgridTransactor->preparePayload($this->inputData);
-        return $this->sendgridTransactor->send();
     }
 }

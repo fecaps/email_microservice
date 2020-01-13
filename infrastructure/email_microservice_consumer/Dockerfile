@@ -1,22 +1,5 @@
-# Stage 1 - Composer Dependencies
-FROM composer:1.9 AS vendor
-
-# Composer Workdir
-WORKDIR /app
-
-# Copy Laravel and Composer files used when installing Dependencies
-COPY database/ database/
-COPY composer.json composer.json
-COPY composer.lock composer.lock
-
-# Install PHP Dependencies
-RUN composer install \
-    --ignore-platform-reqs \
-    --no-interaction \
-    --no-plugins \
-    --no-scripts \
-    --prefer-dist \
-    --no-dev
+# Stage 1 - Composer
+FROM composer:1.9 AS composer
 
 # Stage 2 - Email microservice Consumer
 FROM php:7.3-cli
@@ -41,6 +24,22 @@ RUN docker-php-ext-enable amqp
 # Application Workdir
 WORKDIR /var/www/html/email_microservice
 
+# Copy Laravel and Composer files
+COPY database/ database/
+COPY composer.json composer.json
+COPY composer.lock composer.lock
+
+# Copy Composer binary
+COPY --from=composer /usr/bin/composer /usr/bin/composer
+
+# Install Composer Dependencies
+RUN composer install \
+    --no-interaction \
+    --no-plugins \
+    --no-scripts \
+    --prefer-dist \
+    --no-dev
+
 # Copy project files
 COPY . /var/www/html/email_microservice
 
@@ -49,9 +48,6 @@ RUN chown -R www-data:www-data \
     /var/www/html/email_microservice/storage \
     /var/www/html/email_microservice/bootstrap/cache
 
-# Copy dependencies from Composer stage
-COPY --from=vendor /app/vendor/ /var/www/html/email_microservice/vendor/
-
 # Generate Laravel Key
 RUN php artisan key:generate
 
@@ -59,9 +55,5 @@ RUN php artisan key:generate
 RUN php artisan config:clear
 RUN php artisan clear-compiled
 
-# Wait RabbitMQ
-ADD https://github.com/ufoscout/docker-compose-wait/releases/download/2.6.0/wait /wait
-RUN chmod +x /wait
-
 # Run migrations and consumer command
-CMD /wait && php artisan migrate --force && php artisan consumer:emails
+CMD php artisan migrate --force && php artisan consumer:emails

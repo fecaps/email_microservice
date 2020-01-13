@@ -3,31 +3,37 @@ declare(strict_types=1);
 
 namespace App\Workers;
 
-use App\Transactors\MailjetTransactor;
+use App\DTO\Email;
 
 final class EmailWorker implements Worker
 {
-    private $transactor;
+    /** @var ​ MailerTransactor[] */
+    private $mailers;
 
     /**
-     * Start first transactor
+     * Start mailers transactors
      *
-     * @param MailjetTransactor  $transactor
+     * @param array  $mailers
      */
-    public function __construct(MailjetTransactor $transactor)
+    public function __construct(array $mailers)
     {
-        $this->transactor = $transactor;
+        $this->mailers = $mailers;
     }
 
     /**
      * Send email
      *
-     * @param array  $emailData
+     * @param Email  $email
      * @return bool
      */
-    public function sendEmail(array $emailData): bool
+    public function sendEmail(Email $email): bool
     {
-        $this->transactor->preparePayload($emailData);
-        return $this->transactor->send();
+        foreach ($this->mailers as $mailer) {
+            if ($mailer->send($email)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

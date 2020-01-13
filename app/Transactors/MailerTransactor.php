@@ -1,11 +1,11 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Workers;
+namespace App\Transactors;
 
 use App\DTO\Email;
 
-interface Worker
+interface MailerTransactor
 {
     /**
      * Send email
@@ -13,5 +13,5 @@ interface Worker
      * @param Email  $email
      * @return bool
      */
-    public function sendEmail(Email $email): bool;
+    public function send(Email $email): bool;
 }

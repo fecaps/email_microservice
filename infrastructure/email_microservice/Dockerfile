@@ -1,24 +1,7 @@
-# Stage 1 - Composer Dependencies
-FROM composer:1.9 AS vendor
+# Stage 1 - Composer
+FROM composer:1.9 AS composer
 
-# Composer Workdir
-WORKDIR /app
-
-# Copy Laravel and Composer files used when installing Dependencies
-COPY database/ database/
-COPY composer.json composer.json
-COPY composer.lock composer.lock
-
-# Install PHP Dependencies
-RUN composer install \
-    --ignore-platform-reqs \
-    --no-interaction \
-    --no-plugins \
-    --no-scripts \
-    --prefer-dist \
-    --no-dev
-
-# Stage 2 - Email microservice
+# Stage 2 - Email microservice Publisher
 FROM php:7.3-fpm
 
 # Install Dependencies
@@ -30,7 +13,7 @@ RUN apt-get update && apt-get install -y \
     libpq-dev \
     librabbitmq-dev \
     libssh-dev && \
-    pecl install xdebug amqp
+    pecl install amqp
 
 # Install PHP extensions
 RUN docker-php-ext-configure zip --with-libzip
@@ -41,6 +24,22 @@ RUN docker-php-ext-enable amqp
 # Application Workdir
 WORKDIR /var/www/html/email_microservice
 
+# Copy Laravel and Composer files
+COPY database/ database/
+COPY composer.json composer.json
+COPY composer.lock composer.lock
+
+# Copy Composer binary
+COPY --from=composer /usr/bin/composer /usr/bin/composer
+
+# Install Composer Dependencies
+RUN composer install \
+    --no-interaction \
+    --no-plugins \
+    --no-scripts \
+    --prefer-dist \
+    --no-dev
+
 # Copy project files
 COPY . /var/www/html/email_microservice
 
@@ -48,9 +47,6 @@ COPY . /var/www/html/email_microservice
 RUN chown -R www-data:www-data \
     /var/www/html/email_microservice/storage \
     /var/www/html/email_microservice/bootstrap/cache
-
-# Copy dependencies from Composer stage
-COPY --from=vendor /app/vendor/ /var/www/html/email_microservice/vendor/
 
 # Generate Laravel Key
 RUN php artisan key:generate
@@ -61,3 +57,6 @@ RUN php artisan clear-compiled
 
 # Port to expose
 EXPOSE 9000
+
+# Run app server
+CMD php-fpm

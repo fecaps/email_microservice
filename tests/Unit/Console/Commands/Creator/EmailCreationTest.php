@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Unit\Console\Commands;
+namespace Tests\Unit\Console\Commands\Creator;
 
 use Tests\TestCase;
 use App\Enum\EmailCreation;
