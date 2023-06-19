@@ -313,13 +313,13 @@ Host: `http://localhost:8080`
         ```json
         {
             "from": {
-                "email": "fellipecapelli@gmail.com",
-                "name": "fellipe"
+                "email": "testmail@test.com",
+                "name": "test"
             },
             "to": [
                 {
-                    "email": "fellipe.capelli@outlookl.com",
-                    "name": "fellipe"
+                    "email": "testmail1@test.com",
+                    "name": "test1"
                 }
             ],
             "subject": "hello - test",
